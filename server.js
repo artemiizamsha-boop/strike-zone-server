@@ -80,8 +80,20 @@ function onMessage(peer, text) {
 }
 
 /* ---------- http ---------- */
+const fs = require('fs'), path = require('path');
+const STATIC = { '/': 'index.html', '/index.html': 'index.html', '/manifest.webmanifest': 'manifest.webmanifest', '/sw.js': 'sw.js', '/icon-192.png': 'icon-192.png', '/icon-512.png': 'icon-512.png' };
+const MIME = { html: 'text/html; charset=utf-8', webmanifest: 'application/manifest+json', js: 'text/javascript; charset=utf-8', png: 'image/png' };
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+  const url = (req.url || '/').split('?')[0], f = STATIC[url];
+  if (f) {   // the game itself: open this server's address in any browser, or install it as an app
+    fs.readFile(path.join(__dirname, f), (err, data) => {
+      if (err) { res.writeHead(404); return res.end('not found'); }
+      res.writeHead(200, { 'Content-Type': MIME[f.split('.').pop()] || 'application/octet-stream', 'Cache-Control': f === 'sw.js' || f === 'index.html' ? 'no-cache' : 'public, max-age=86400' });
+      res.end(data);
+    });
+    return;
+  }
+  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });   // /health and anything else
   res.end(JSON.stringify({ ok: true, game: 'strike-zone', rooms: rooms.size }));
 });
 server.on('upgrade', (req, socket) => accept(req, socket));

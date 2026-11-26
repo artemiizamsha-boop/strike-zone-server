@@ -527,6 +527,31 @@ body.started #menuTeams{opacity:.45;pointer-events:none}
 .mpn{padding:8px 10px;background:rgba(232,163,61,.12);border-left:3px solid #e8a33d;font-size:16px;line-height:1.3}.mpn.er{background:rgba(255,100,70,.12);border-color:#ff6446}
 .mpcode{font-size:34px;font-weight:700;letter-spacing:.18em;text-align:center;padding:6px;background:rgba(0,0,0,.4);border:2px dashed var(--accent)}
 #mpmsg{min-height:20px;font-size:16px;color:#9dff7a}#mpmsg.er{color:#ff7a5f}
+.mpmodal{position:fixed;inset:0;z-index:62;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:12px}.mpmodal.on{display:flex}
+#frm .acc-b,#lbm .acc-b,#mpm .acc-b{display:flex;flex-direction:column;gap:10px}
+#frmsg{min-height:18px;font-size:16px;color:#9dff7a}#frmsg.er{color:#ff7a5f}
+#frb,#lbb{position:relative}.bdg{position:absolute;top:6px;right:8px;min-width:18px;height:18px;border-radius:9px;background:#ff4d3a;color:#fff;font:700 12px/18px Arial,sans-serif;font-style:normal;align-items:center;justify-content:center;display:none;padding:0 4px}
+#frtoast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%) translateY(-120px);z-index:64;max-width:90vw;padding:10px 16px;background:rgba(14,12,9,.97);border:2px solid var(--accent);border-radius:8px;font-size:18px;cursor:pointer;transition:transform .3s}#frtoast.on{transform:translateX(-50%) translateY(0)}
+.mpx-top{display:flex;gap:8px;align-items:center;justify-content:space-between}.mpx-id{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(0,0,0,.35);border-radius:8px;font-size:20px}.mpx-id small{opacity:.6}.mpx-id b{letter-spacing:.06em}
+.mpx-hero{text-align:center;padding:18px 14px;border-radius:12px;background:radial-gradient(ellipse at 50% 0,rgba(232,163,61,.28),rgba(0,0,0,.35) 70%);border:1px solid rgba(232,163,61,.35)}.mpx-hero h3{margin:2px 0 4px;font-size:26px;letter-spacing:.04em}.mpx-hero p{margin:0 0 12px;opacity:.75;font-size:16px;line-height:1.3}.mpx-ico{font-size:40px;line-height:1}
+.mpx-big{font-size:22px!important;padding:12px 18px!important;width:100%;border-radius:8px!important;background:linear-gradient(135deg,#ff9a1f,#e5481d)!important;color:#fff!important;box-shadow:0 4px 16px rgba(229,72,29,.35)}
+.mpx-or{display:flex;align-items:center;gap:10px;opacity:.55;font-size:15px}.mpx-or:before,.mpx-or:after{content:"";flex:1;height:1px;background:currentColor}
+.mpx-room{text-align:center}.mpx-room label{opacity:.65;font-size:14px;letter-spacing:.1em}
+.mpx-tm{gap:10px}.mpx-t{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px;border-radius:10px;cursor:pointer;color:var(--fg);font:inherit;border:2px solid transparent;background:rgba(241,230,207,.07)}
+.mpx-t b{font-size:20px}.mpx-t small{font-size:15px;opacity:.7}.mpx-t.t{background:linear-gradient(160deg,rgba(232,163,61,.22),rgba(0,0,0,.25))}.mpx-t.ct{background:linear-gradient(160deg,rgba(79,143,224,.24),rgba(0,0,0,.25))}.mpx-t.sel{border-color:var(--accent);box-shadow:0 0 14px rgba(255,170,60,.35)}
+.mpx-pl{display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow:auto}
+.mpx-av{position:relative;flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;background:#555;color:#fff;font-size:18px}.mpx-av.t{background:linear-gradient(135deg,#e8a33d,#b8601d)}.mpx-av.ct{background:linear-gradient(135deg,#4f8fe0,#2b5aa8)}
+.mpx-av .dot{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#777;border:2px solid #1b1710}.mpx-av.on .dot{background:#6bd24a}
+.mpr{border-radius:8px}.mpr .ok{background:#4aa32a;color:#fff}.mpr button{position:relative}.mpr button em{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;border-radius:9px;background:#ff4d3a;color:#fff;font:700 11px/17px Arial,sans-serif;font-style:normal;text-align:center}
+.mpr b small{opacity:.55;font-weight:400;font-size:13px}
+.frch-h{display:flex;align-items:center;gap:8px;font-size:20px}.frch-h b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.frch-h small{opacity:.65}
+.frch-m{height:42vh;min-height:180px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:8px;background:rgba(0,0,0,.35);border-radius:10px}.frch-e{margin:auto;opacity:.5}
+.frm{align-self:flex-start;max-width:80%;padding:7px 11px;border-radius:12px 12px 12px 3px;background:rgba(241,230,207,.14);font-size:18px;word-break:break-word}.frm.me{align-self:flex-end;border-radius:12px 12px 3px 12px;background:linear-gradient(135deg,#d97f1a,#b8481d);color:#fff}.frm small{display:block;font-size:11px;opacity:.55;text-align:right}
+.lb-tabs{display:flex;gap:6px}.lb-tabs button{flex:1;padding:8px 4px;font:inherit;font-size:16px;border:0;border-radius:6px;cursor:pointer;color:var(--fg);background:rgba(241,230,207,.1)}.lb-tabs button.on{background:var(--accent);color:#1a1209;font-weight:700}
+.lb-h,.lb-r{display:grid;grid-template-columns:34px 1fr 46px 52px 40px 46px;gap:4px;align-items:center;padding:5px 8px;font-size:16px}.lb-h{opacity:.55;font-size:13px;letter-spacing:.06em}.lb-h span:nth-child(n+3),.lb-r span:nth-child(n+3){text-align:right}
+.lb-l{display:flex;flex-direction:column;gap:3px;max-height:48vh;overflow:auto}.lb-r{background:rgba(241,230,207,.06);border-radius:6px}.lb-r b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lb-r.top1{background:linear-gradient(90deg,rgba(255,200,60,.25),rgba(241,230,207,.06))}.lb-r.top2{background:linear-gradient(90deg,rgba(200,210,225,.2),rgba(241,230,207,.06))}.lb-r.top3{background:linear-gradient(90deg,rgba(205,127,50,.22),rgba(241,230,207,.06))}.lb-r.me{outline:2px solid var(--accent)}
+.lb-you{text-align:center;font-size:18px;color:var(--accent)}
+
 #mpinv{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:63;display:none;gap:10px;align-items:center;padding:10px 14px;background:rgba(14,12,9,.97);border:2px solid var(--accent);font-size:19px;box-shadow:0 8px 30px #000}#mpinv.on{display:flex}
 #mpinv button{font:inherit;font-weight:700;padding:6px 14px;border:0;border-radius:3px;cursor:pointer;background:#67b53a;color:#fff}
 
@@ -689,7 +714,7 @@ body.sidesel #menu{background:none}
 <div id="tabb">TAB</div><div id="menub">☰</div>
 <div id="lvm"><div class="lvc"><h3 id="lvh"></h3><p id="lvp"></p><div class="lvr"><button id="lvs" type="button"></button><button id="lvg" type="button"></button></div></div></div>
 <div id="menu">
-  <div id="bar"><button id="accb" data-ia="acc_t"><span id="accav"></span><span id="accn"><b id="accnb"></b><small id="accns"></small></span></button><button class="ib on" id="hb" data-ia="hm"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button><button class="ib" id="mpb" data-ia="mp_t"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14c3 0 4.8 1.9 4.8 5"/></svg></button><button class="ib" id="shb" data-ia="sh_t"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></button><button class="ib" id="inb" data-ia="in_t"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8"/><path d="M3 13.5h18"/><rect x="10.5" y="11.5" width="3" height="4" rx=".6"/></svg></button><button class="ib" id="gear" data-ia="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
+  <div id="bar"><button id="accb" data-ia="acc_t"><span id="accav"></span><span id="accn"><b id="accnb"></b><small id="accns"></small></span></button><button class="ib on" id="hb" data-ia="hm"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button><button class="ib" id="mpb" data-ia="mp_t"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14c3 0 4.8 1.9 4.8 5"/></svg></button><button class="ib" id="frb" data-ia="fr_t"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.4"/><path d="M2.5 19c0-3.2 2.4-5.4 5.5-5.4s5.5 2.2 5.5 5.4"/><path d="M15 14.2c3.4-.4 6 1.4 6 4.8"/></svg><i id="frbd" class="bdg"></i></button><button class="ib" id="lbb" data-ia="lb_t"><svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1.5A3.5 3.5 0 0 0 7 11M17 6h3v1.5A3.5 3.5 0 0 1 17 11"/><path d="M12 14v4M8 20h8"/></svg></button><button class="ib" id="shb" data-ia="sh_t"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></button><button class="ib" id="inb" data-ia="in_t"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8"/><path d="M3 13.5h18"/><rect x="10.5" y="11.5" width="3" height="4" rx=".6"/></svg></button><button class="ib" id="gear" data-ia="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
   <div id="home">
     <div id="stage"></div>
     <div id="hero" class="main"><h1 id="mt"></h1><p id="sub"></p></div>
@@ -779,7 +804,7 @@ body.sidesel #menu{background:none}
 <div id="shm"><div class="md-box"><div class="md-h"><span id="sht"></span><button id="shx" aria-label="close">✕</button></div><div class="sh-top"><div class="sh-tabs" id="shtabs"></div><div class="sh-bal"><i></i><span id="shbal">0</span></div></div><div class="sh-body"><p class="sh-note" id="shnote"></p><div class="sh-grid" id="shgrid"></div></div><div id="shmsg"></div></div></div>
 <div id="csm"><div class="md-box"><div class="md-h"><span id="cst"></span><button id="csx" aria-label="close">✕</button></div><div class="sh-top" style="justify-content:flex-end"><div class="sh-bal"><i></i><span id="csbal">0</span></div></div><div class="cs-b"><div class="cs-roll"><div class="cs-mk"></div><div class="cs-tr" id="cstr"></div></div><div class="cs-res" id="csres"></div><h4 id="csh"></h4><div class="cs-list" id="cslist"></div></div><div id="csmsg"></div><div class="cs-act"><button id="csgo"></button><button id="csok"></button></div></div></div>
 <div id="cso"><div class="cso-bg" id="csobg"></div><div class="cso-floor"></div><div class="cso-fog"></div><div class="cso-h"><b id="csot"></b><small id="csos"></small></div><div class="cso-st"><div class="cso-cam" id="csocam"><div class="cso-case" id="csocase"></div><div class="cso-pal"></div></div></div><div class="cso-ls" id="csols"><div class="cso-roll"><div class="cso-tr" id="csotr"></div></div><div class="cso-blur"></div><div class="cso-ring"></div><div class="cso-mk"></div></div><div class="cso-rv" id="csorv"></div><div class="cso-fl"></div><div class="cso-bar"><i class="cso-spin" id="csospin"></i><span id="csoh"></span><button id="csoa" type="button"></button><button id="csob" type="button" class="b2"></button></div></div>
-<div id="mpm"><div class="md-box acc-box"><div class="md-h"><span id="mpt"></span><button id="mpx" aria-label="close">✕</button></div><div class="acc-b" id="mpbody"></div></div></div><div id="mpinv"></div>
+<div id="mpm"><div class="md-box acc-box"><div class="md-h"><span id="mpt"></span><button id="mpx" aria-label="close">✕</button></div><div class="acc-b" id="mpbody"></div></div></div><div id="mpinv"></div><div id="frtoast"></div><div id="frm" class="mpmodal"><div class="md-box acc-box"><div class="md-h"><span id="frt"></span><button id="frx" aria-label="close">✕</button></div><div class="acc-b" id="frbody"></div></div></div><div id="lbm" class="mpmodal"><div class="md-box acc-box"><div class="md-h"><span id="lbt"></span><button id="lbx" aria-label="close">✕</button></div><div class="acc-b" id="lbbody"></div></div></div>
 <div id="accm"><div class="md-box acc-box"><div class="md-h"><span id="acct"></span><button id="accx" aria-label="close">✕</button></div><div class="acc-b" id="accbody"></div></div></div>
 <div id="prm"><div class="md-box" style="width:min(92vw,460px)"><div class="md-h"><span id="prt"></span><button id="prx" aria-label="close">✕</button></div><div class="pr-b"><p id="prh"></p><input id="pri" type="text" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false"><div id="prmsg"></div><button id="prgo" type="button"></button><a id="prtg" target="_blank" rel="noopener noreferrer"></a></div></div></div>
 <div id="mdl"><div class="md-box"><div class="md-h"><span data-i="md_t"></span><button id="mdx" aria-label="close">✕</button></div><div class="md-b"><div class="md-modes" id="mdModes"></div><div class="md-det" id="mdDet"></div></div><button id="mdok" data-i="md_ok"></button></div></div>
@@ -2963,7 +2988,7 @@ for(const l in X)if(TX[l])Object.assign(TX[l],X[l])}
 function endMatch(fw,loud,adm){
   if(matchOver||!started)return;matchOver=true;roundOver=true;buyActive=false;waitRound=false;
   if(fw)SC[fw]=Math.max(SC[fw],MWIN);
-  const wn=fw||(SC.T>SC.CT?'T':SC.CT>SC.T?'CT':null),res=!wn?'d':wn===team?'w':'l',en=enemy();
+  const wn=fw||(SC.T>SC.CT?'T':SC.CT>SC.T?'CT':null),res=!wn?'d':wn===team?'w':'l',en=enemy();try{lbSubmit(res,adm)}catch(e){}
   const e=$('eres');e.textContent=t(res==='w'?'en_w':res==='l'?'en_l':'en_d');e.className='et '+res;
   $('est').lastChild.textContent=SC.T;$('esc').lastChild.textContent=SC.CT;$('est').classList.toggle('me',team==='T');$('esc').classList.toggle('me',team==='CT');
   $('esub').textContent=(MP.on?t('mp_esub'):t('en_sub')).replace('{w}',SC[team]).replace('{l}',SC[en]);
@@ -3455,10 +3480,13 @@ function mpScore(){const K={T:0,CT:0};K[team]+=S_.k;for(const r of Object.values
    Inside Claude the built-in room is used. Everywhere else (APK, PC, browser, Telegram) the game talks to your own relay server (server/server.js):
    put its address below, e.g.  const MP_SERVER='wss://strike-zone-relay.onrender.com';   (a page can also be opened with ?mp=wss://... for testing) */
 var MP_SERVER='wss://strike-zone-medh.onrender.com';
+var SZN={h:{},hs:'',tx(){},ok(){return false},on(t,f){(SZN.h[t]||(SZN.h[t]=[])).push(f)},
+  ask(o,type,ms,flt){return new Promise(res=>{if(!SZN.ok())return res(null);let done=false;const f=m=>{if(done||(flt&&!flt(m)))return;done=true;const a=SZN.h[type],i=a.indexOf(f);if(i>=0)a.splice(i,1);res(m)};SZN.on(type,f);SZN.tx(o);setTimeout(()=>{if(!done){done=true;res(null)}},ms)})},
+  hello(force){try{const a=curAccRaw();const s=a&&idOk(a.id)?a.id+'|'+a.n:'';if(!s||!SZN.ok()||(s===SZN.hs&&!force))return;SZN.hs=s;SZN.tx({t:'hello',id:a.id,n:a.n})}catch(e){}}};
 function szRoomConnect(url){return new Promise((resolve,reject)=>{
   let ws=null,me=null,opened=false,dead=false,retry=0;const R={};const own={};   /* R[name] = {peers:Map(peerId->presence), cbs:[], pend:[]} */
   const rm=n=>R[n]||(R[n]={peers:new Map(),cbs:[],pend:[],joined:false});
-  const send=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
+  const send=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};SZN.tx=send;SZN.ok=()=>!!(ws&&ws.readyState===1);
   const list=n=>{const r=rm(n),a=[{peer:me,isMe:true,presence:Object.assign({},own[n]||{})}];r.peers.forEach((p,id)=>a.push({peer:id,isMe:false,presence:p}));return a};
   const fire=n=>{const r=rm(n),ch={peers:list(n)};r.cbs.forEach(f=>{try{f(ch)}catch(e){console.warn(e)}})};
   const api=n=>({peers:()=>list(n),onPeers(cb){rm(n).cbs.push(cb);return()=>{const c=rm(n).cbs,i=c.indexOf(cb);if(i>=0)c.splice(i,1)}},
@@ -3470,9 +3498,10 @@ function szRoomConnect(url){return new Promise((resolve,reject)=>{
     r.pend.push(()=>{clearTimeout(to);res(api(n))});r.err=()=>{clearTimeout(to);rej(new Error('full'))};send({t:'j',r:n})});
   const connect=()=>{try{ws=new WebSocket(url)}catch(e){return reject(e)}
     const t0=setTimeout(()=>{if(!opened){try{ws.close()}catch(e){}reject(new Error('connect timeout'))}},5000);
-    ws.onopen=()=>{opened=true;clearTimeout(t0);retry=0;send({t:'j',r:'sz-lobby'});for(const n in R)if(n!=='sz-lobby'&&R[n].joined)send({t:'j',r:n});for(const n in own)send({t:'p',r:n,p:own[n]})};
+    ws.onopen=()=>{opened=true;clearTimeout(t0);retry=0;SZN.hs='';SZN.hello(true);send({t:'j',r:'sz-lobby'});for(const n in R)if(n!=='sz-lobby'&&R[n].joined)send({t:'j',r:n});for(const n in own)send({t:'p',r:n,p:own[n]})};
     ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
       if(m.t==='w'){me=m.id;if(!lobby._ok){lobby._ok=true;resolve(lobby)}return}
+      if(SZN.h[m.t]){SZN.h[m.t].slice().forEach(f=>{try{f(m)}catch(e){console.warn(e)}});return}
       const r=R[m.r];if(!r)return;
       if(m.t==='s'){r.peers.clear();(m.peers||[]).forEach(([id,p])=>{if(id!==me)r.peers.set(id,p)});r.joined=true;const pend=r.pend.splice(0);pend.forEach(f=>f());fire(m.r)}
       else if(m.t==='p'){if(m.peer!==me){r.peers.set(m.peer,m.p||{});fire(m.r)}}
@@ -3482,8 +3511,8 @@ function szRoomConnect(url){return new Promise((resolve,reject)=>{
     ws.onerror=()=>{}};
   connect()})}
 let MP_URL=MP_SERVER;try{MP_URL=new URLSearchParams(location.search).get('mp')||MP_SERVER}catch(e){}
-(async()=>{try{const r=typeof claude!=='undefined'&&claude.use?await claude.use('room'):(MP_URL?await szRoomConnect(MP_URL):null);if(!r){MP.ok=false;mpDyn();return}MP.ok=true;MP.api=r;mpLobbyPres();r.onPeers(ch=>{MP.lob=ch.peers.filter(p=>!p.isMe&&p.presence&&p.presence.id);mpInvites();mpDyn()},()=>{});}catch(e){MP.ok=false;mpDyn()}})();
-function mpLobbyPres(){if(MP.api)MP.api.presence({id:myId(),n:myName(),rm:MP.code||''}).catch(()=>{})}
+(async()=>{try{const r=typeof claude!=='undefined'&&claude.use?await claude.use('room'):(MP_URL?await szRoomConnect(MP_URL):null);if(!r){MP.ok=false;mpDyn();return}MP.ok=true;MP.api=r;mpLobbyPres();r.onPeers(ch=>{MP.lob=ch.peers.filter(p=>!p.isMe&&p.presence&&p.presence.id);mpInvites();mpDyn();try{frDyn()}catch(e){}},()=>{});}catch(e){MP.ok=false;mpDyn()}})();
+function mpLobbyPres(){SZN.hello();if(MP.api)MP.api.presence({id:myId(),n:myName(),rm:MP.code||''}).catch(()=>{})}
 function mpInvites(){for(const p of MP.lob){const iv=p.presence.inv;if(iv&&iv.to===myId()&&iv.rm&&MP.sinv[p.peer]!==iv.s){MP.sinv[p.peer]=iv.s;const b=$('mpinv');b.innerHTML='<span>'+escH(t('mp_invm').replace('{n}',String(p.presence.n||'?').slice(0,16)))+'</span><button>'+t('mp_goin')+'</button>';b.classList.add('on');b.querySelector('button').onclick=()=>{b.classList.remove('on');mpJoin(String(iv.rm));openMp()};setTimeout(()=>b.classList.remove('on'),15000)}}}
 function mpFind(id){return MP.lob.find(p=>String(p.presence.id)===id)}
 // ---- rooms ----
@@ -3494,29 +3523,29 @@ async function mpJoin(code){code=String(code||'').toLowerCase().replace(/[^a-z0-
 async function mpLeave(){if(MP.room){try{await MP.room.leave()}catch(e){}}MP.room=null;MP.code='';mpClear();mpLobbyPres();mpDyn()}
 function mpClear(){for(const k in MP.rp)mpRemove(k);MP.rp={};MP.seen={};MP.ms=[]}
 function mpNewCode(){const a=new Uint8Array(6);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<6;i++)a[i]=Math.random()*256}return Array.from(a,b=>'abcdefghjkmnpqrstuvwxyz23456789'[b%31]).join('')}
-// ---- menu UI ----
-function openMp(){$('mpm').classList.add('on');$('mpt').textContent=t('mp_t');
-  $('mpbody').innerHTML='<div class="acc-id"><span>ID</span><b>'+fmtId(myId())+'</b><button class="sb2" id="mp-cp">'+t('acc_cp')+'</button></div><div id="mp-g"></div><div id="mp-room"></div><h4>'+t('mp_fr')+'</h4><div class="mprow"><input id="mp-fid" inputmode="numeric" maxlength="12" placeholder="#0000 0000" autocomplete="off"><button class="pb" id="mp-add">'+t('mp_add')+'</button></div><div id="mpmsg"></div><div id="mp-frl" style="display:flex;flex-direction:column;gap:6px"></div><div class="mpn">'+t('mp_hint')+'</div>';
+// ---- menu UI (multiplayer window) ----
+const mpTeamN=tm=>{let n=0;const ps=MP.room?MP.room.peers():[];for(const p of ps){const s=p.presence||{};if((s.t==='CT'?'CT':'T')===tm)n++}return n};
+function openMp(){$('mpm').classList.add('on');$('mpt').textContent=t('mp_t');SZN.hello();
+  $('mpbody').innerHTML='<div class="mpx-top"><div class="mpx-id"><small>ID</small><b>'+fmtId(myId())+'</b><button class="sb2" id="mp-cp">'+t('acc_cp')+'</button></div><button class="sb2 mpx-fr" id="mp-fr">👥 '+t('fr_t')+'</button></div><div id="mp-g"></div><div id="mp-room"></div><div id="mpmsg"></div>';
   $('mp-cp').onclick=()=>{try{navigator.clipboard.writeText(myId());$('mpmsg').className='';$('mpmsg').textContent=t('mp_cpc')}catch(e){}};
-  const add=()=>{const v=($('mp-fid').value||'').replace(/\D/g,''),m=$('mpmsg');m.className='er';if(v.length!==8){m.textContent=t('mp_bad');return}if(v===myId()){m.textContent=t('mp_self');return}if(FR().some(f=>f.id===v)){m.textContent=t('mp_dup');return}
-    const p=mpFind(v);FR().push({id:v,n:p?String(p.presence.n||'').slice(0,16):''});frSave();$('mp-fid').value='';m.className='';m.textContent=t('mp_added');mpDyn()};
-  $('mp-add').onclick=add;$('mp-fid').onkeydown=e=>{e.stopPropagation();if(e.key==='Enter')add()};$('mp-fid').onkeyup=e=>e.stopPropagation();mpDyn()}
+  $('mp-fr').onclick=()=>{$('mpm').classList.remove('on');openFr()};mpDyn()}
 function mpDyn(){if(!$('mpm').classList.contains('on'))return;
-  $('mp-g').innerHTML=(PID()?'':'<div class="mpn">'+t('mp_guest')+'</div>')+(MP.ok===false?'<div class="mpn er">'+t('mp_off')+'</div>':'');
+  $('mp-g').innerHTML=(PID()?'':'<div class="mpn">'+t('mp_guest')+'</div>')+(MP.ok===false?'<div class="mpn er">'+t('mp_off')+'</div>':"");
   const R=$('mp-room');
-  if(!MP.code){R.innerHTML='<div class="mprow"><button class="pb" id="mp-new" style="flex:1">'+t('mp_new')+'</button></div><div style="margin-top:8px"><label>'+t('mp_code')+'</label><div class="mprow"><input id="mp-code" maxlength="8" autocomplete="off"><button class="sb2" id="mp-join">'+t('mp_join')+'</button></div></div>';
+  if(!MP.code){R.innerHTML='<div class="mpx-hero"><div class="mpx-ico">🎯</div><h3>'+t('mp_h1')+'</h3><p>'+t('mp_hint')+'</p><button class="pb mpx-big" id="mp-new">'+t('mp_new')+'</button></div>'
+      +'<div class="mpx-or"><span>'+t('mp_or')+'</span></div><div class="mprow"><input id="mp-code" maxlength="8" autocomplete="off" placeholder="'+t('mp_code')+'"><button class="sb2" id="mp-join">'+t('mp_join')+'</button></div>';
     $('mp-new').onclick=()=>{if(!MP.api)return;mpJoin(mpNewCode())};$('mp-join').onclick=()=>mpJoin($('mp-code').value);$('mp-code').onkeydown=e=>{e.stopPropagation();if(e.key==='Enter')mpJoin($('mp-code').value)};$('mp-code').onkeyup=e=>e.stopPropagation()}
-  else{const ps=MP.room?MP.room.peers():[];R.innerHTML='<label>'+t('mp_code')+'</label><div class="mpcode" id="mp-cc">'+escH(MP.code.toUpperCase())+'</div><h4>'+t('mp_pl')+'</h4>'+(ps.map(p=>{const s=p.presence||{};return '<div class="mpr '+(s.t==='CT'?'ct':'t')+'"><b>'+escH(p.isMe?myName():s.n||'?')+(p.isMe?' ★':'')+'</b><small>'+(s.t==='CT'?t('specH'):t('terrH'))+(s.pl?' · '+(s.k|0)+'/'+(s.d|0):'')+'</small></div>'}).join('')||'<div class="mpn">'+t('mp_wait')+'</div>')
-    +'<div class="mprow" style="margin-top:6px"><button class="sb2" data-mt="T" style="flex:1">'+t('terrH')+'</button><button class="sb2" data-mt="CT" style="flex:1">'+t('specH')+'</button></div><div class="mprow" style="margin-top:6px"><button class="pb" id="mp-play" style="flex:2">'+t('mp_play')+'</button><button class="sb2" id="mp-lv" style="flex:1">'+t('mp_leave')+'</button></div>';
-    $('mp-cc').onclick=()=>{try{navigator.clipboard.writeText(MP.code)}catch(e){}};
-    R.querySelectorAll('[data-mt]').forEach(b=>{b.style.borderColor=b.dataset.mt===team?'var(--accent)':'';b.onclick=()=>{const x=document.querySelector('#menuTeams [data-team="'+b.dataset.mt+'"]');if(x)x.click();team=b.dataset.mt;mpSend(true);mpDyn()}});
-    $('mp-lv').onclick=mpLeave;$('mp-play').onclick=mpPlay}
-  const l=$('mp-frl');l.innerHTML=FR().map((f,i)=>{const p=mpFind(f.id),on=!!p;if(p&&p.presence.n&&p.presence.n!==f.n){f.n=String(p.presence.n).slice(0,16);frSave()}
-    const rm=on&&p.presence.rm;return '<div class="mpr'+(on?' on':'')+'"><b>'+escH(f.n||t('mp_fr'))+' <small>'+fmtId(f.id)+'</small></b><small>'+(rm?t('mp_inroom'):on?t('mp_on'):t('mp_offl'))+'</small>'
-      +(rm?'<button data-go="'+i+'">'+t('mp_goin')+'</button>':'')+(on&&MP.code?'<button data-iv="'+i+'">'+t('mp_inv')+'</button>':'')+'<button data-rm="'+i+'">✕</button></div>'}).join('');
-  l.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const p=mpFind(FR()[+b.dataset.go].id);if(p)mpJoin(String(p.presence.rm))});
-  l.querySelectorAll('[data-iv]').forEach(b=>b.onclick=()=>{if(!MP.api)return;const s=Date.now();MP.api.presence({inv:{to:FR()[+b.dataset.iv].id,s,rm:MP.code}}).catch(()=>{});setTimeout(()=>MP.api.presence({inv:null}).catch(()=>{}),12000);b.textContent='✓'});
-  l.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{FR().splice(+b.dataset.rm,1);frSave();mpDyn()})}
+  else{const ps=MP.room?MP.room.peers():[];
+    const row=p=>{const s=p.presence||{},nm=p.isMe?myName():String(s.n||'?').slice(0,16),tm=(p.isMe?team:s.t)==='CT'?'ct':'t';
+      return '<div class="mpr '+tm+'"><span class="mpx-av '+tm+'">'+escH(nm.slice(0,1).toUpperCase())+'</span><b>'+escH(nm)+(p.isMe?' ★':'')+'</b><small>'+(tm==='ct'?t('specH'):t('terrH'))+(s.pl?' · '+(s.k|0)+'/'+(s.d|0):'')+'</small></div>'};
+    R.innerHTML='<div class="mpx-room"><label>'+t('mp_code')+'</label><div class="mpcode" id="mp-cc" title="'+t('acc_cp')+'">'+escH(MP.code.toUpperCase())+'</div></div>'
+      +'<h4>'+t('mp_team')+'</h4><div class="mprow mpx-tm"><button class="mpx-t t" data-mt="T"><b>'+t('terrH')+'</b><small>'+mpTeamN('T')+'</small></button><button class="mpx-t ct" data-mt="CT"><b>'+t('specH')+'</b><small>'+mpTeamN('CT')+'</small></button></div>'
+      +'<h4>'+t('mp_pl')+' · '+ps.length+'</h4><div class="mpx-pl">'+ps.map(row).join('')+'</div>'
+      +'<div class="mprow" style="margin-top:12px"><button class="pb mpx-big" id="mp-play" style="flex:2">▶ '+t('mp_play')+'</button><button class="sb2" id="mp-inv2" style="flex:1">'+t('mp_inv')+'</button><button class="sb2" id="mp-lv" style="flex:1">'+t('mp_leave')+'</button></div>';
+    $('mp-cc').onclick=()=>{try{navigator.clipboard.writeText(MP.code);$('mpmsg').className='';$('mpmsg').textContent=t('mp_cpc')}catch(e){}};
+    R.querySelectorAll('[data-mt]').forEach(b=>{b.classList.toggle('sel',b.dataset.mt===team);b.onclick=()=>{const x=document.querySelector('#menuTeams [data-team="'+b.dataset.mt+'"]');if(x)x.click();team=b.dataset.mt;mpSend(true);mpDyn()}});
+    $('mp-inv2').onclick=()=>{$('mpm').classList.remove('on');openFr()};
+    $('mp-lv').onclick=mpLeave;$('mp-play').onclick=mpPlay}}
 function mpPlay(){if(started){const m=$('mpmsg');m.className='er';m.textContent=t('mp_started');return}MP.on=true;$('mpm').classList.remove('on');$('start').click()}
 // ---- match ----
 function mpBegin(){MP.on=true;roundOver=false;matchOver=false;buyActive=false;waitRound=false;freezeLeft=0;$('buy').classList.remove('open');$('frz').style.display='none';
@@ -3569,6 +3598,95 @@ function mpSb(s){const rows=[{n:myName(),t:team,k:S_.k,me:1,l:KL['@me']}].concat
   const tb=tm=>{const a=rows.filter(x=>x.t===tm).sort((x,y)=>y.k-x.k);return '<div class="sbt'+(tm==='T'?'':' ct')+'"><div class="sbn">'+teamIco(tm)+'<span>'+a.length+'</span></div>'+a.map(x=>sbRow(x.n,1,x.me,x.l,x.k)).join('')+'</div>'};
   s.innerHTML=tb('T')+tb('CT')+sbFoot()}
 $('mpb').onclick=openMp;$('mpx').onclick=()=>$('mpm').classList.remove('on');
+/* ===== friends window + chat + leaderboard (needs the new server.js; friends still work locally without it) ===== */
+{const X2={
+uk:{fr_t:'Друзі',mp_h1:'Грай з друзями',mp_or:'або',mp_off:'Немає зв’язку з сервером. Якщо сайт щойно «прокидався», зачекайте хвилину і відкрийте вікно знову.',fr_ph:'ID друга',fr_add_b:'Додати',fr_nf:'Гравця з таким ID не знайдено. Друг має хоч раз зайти в гру під акаунтом.',fr_off:'Немає зв’язку з сервером, спробуйте за хвилину',fr_ok:'Друга додано: {n}',fr_req:'Запити в друзі',fr_none:'Поки немає друзів. Додайте першого за ID 👆',fr_on:'онлайн',fr_in:'у кімнаті',fr_of:'офлайн',fr_guest:'Для друзів і чату створіть акаунт у профілі.',fr_back:'Назад',fr_msg:'Повідомлення…',fr_empty:'Напишіть першим 👋',fr_new:'{n} додав вас у друзі',fr_dm:'{n}: {x}',fr_wait:'Перевіряю…',fr_noc:'Чат недоступний без з’єднання з сервером',lb_t:'Лідерборд',lb_k:'Вбивства',lb_kd:'K/D',lb_w:'Перемоги',lb_hs:'HS %',lb_m:'Матчі',lb_empty:'Поки нікого. Зіграйте матч і потрапите в таблицю!',lb_off:'Не вдалося підключитись до сервера. Спробуйте за хвилину.',lb_you:'Ваше місце: {n}',lb_guest:'Щоб потрапити в таблицю, створіть акаунт у профілі.',lb_load:'Завантаження…',lb_pl:'Гравець'},
+en:{fr_t:'Friends',mp_h1:'Play with friends',mp_or:'or',mp_off:'No connection to the server. If the site was just waking up, wait a minute and reopen this window.',fr_ph:'Friend ID',fr_add_b:'Add',fr_nf:'No player with this ID. Your friend must have logged in with an account at least once.',fr_off:'No connection to the server, try again in a minute',fr_ok:'Friend added: {n}',fr_req:'Friend requests',fr_none:'No friends yet. Add the first one by ID 👆',fr_on:'online',fr_in:'in a room',fr_of:'offline',fr_guest:'Create an account in your profile to use friends and chat.',fr_back:'Back',fr_msg:'Message…',fr_empty:'Say hi first 👋',fr_new:'{n} added you as a friend',fr_dm:'{n}: {x}',fr_wait:'Checking…',fr_noc:'Chat needs a connection to the server',lb_t:'Leaderboard',lb_k:'Kills',lb_kd:'K/D',lb_w:'Wins',lb_hs:'HS %',lb_m:'Matches',lb_empty:'Nobody yet. Play a match to get on the board!',lb_off:'Could not reach the server. Try again in a minute.',lb_you:'Your rank: {n}',lb_guest:'Create an account in your profile to appear on the board.',lb_load:'Loading…',lb_pl:'Player'},
+ru:{fr_t:'Друзья',mp_h1:'Играй с друзьями',mp_or:'или',mp_off:'Нет связи с сервером. Если сайт только что «просыпался», подождите минуту и откройте окно снова.',fr_ph:'ID друга',fr_add_b:'Добавить',fr_nf:'Игрок с таким ID не найден. Друг должен хотя бы раз зайти в игру под аккаунтом.',fr_off:'Нет связи с сервером, попробуйте через минуту',fr_ok:'Друг добавлен: {n}',fr_req:'Заявки в друзья',fr_none:'Пока нет друзей. Добавьте первого по ID 👆',fr_on:'онлайн',fr_in:'в комнате',fr_of:'офлайн',fr_guest:'Для друзей и чата создайте аккаунт в профиле.',fr_back:'Назад',fr_msg:'Сообщение…',fr_empty:'Напишите первым 👋',fr_new:'{n} добавил вас в друзья',fr_dm:'{n}: {x}',fr_wait:'Проверяю…',fr_noc:'Чат недоступен без связи с сервером',lb_t:'Лидерборд',lb_k:'Убийства',lb_kd:'K/D',lb_w:'Победы',lb_hs:'HS %',lb_m:'Матчи',lb_empty:'Пока никого. Сыграйте матч и попадёте в таблицу!',lb_off:'Не удалось подключиться к серверу. Попробуйте через минуту.',lb_you:'Ваше место: {n}',lb_guest:'Чтобы попасть в таблицу, создайте аккаунт в профиле.',lb_load:'Загрузка…',lb_pl:'Игрок'}};
+for(const l in X2)if(TX[l])Object.assign(TX[l],X2[l])}
+const SZN_ID=()=>{const a=curAccRaw();return a&&idOk(a.id)?a.id:''};
+/* ---- chat store (per account, in this browser) ---- */
+let CH={},chPid='';
+function chLoad(){const p=SZN_ID();if(p===chPid&&CH)return;chPid=p;try{CH=JSON.parse(localStorage.getItem('sz_chat_'+p)||'{}')||{}}catch(e){CH={}}}
+const chSave=()=>{try{localStorage.setItem('sz_chat_'+chPid,JSON.stringify(CH))}catch(e){}};
+const chOf=id=>{chLoad();return CH[id]||(CH[id]={m:[],u:0})};
+const chQ=()=>{chLoad();return CH._q||(CH._q=[])};
+const hhmm=ts=>{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const frNm=f=>f.n||fmtId(f.id);
+function frBadge(){chLoad();let n=chQ().length;for(const k in CH)if(k!=='_q'&&CH[k]&&CH[k].u)n+=CH[k].u;const b=$('frbd');if(!b)return;b.textContent=n>9?'9+':n;b.style.display=n?'flex':'none'}
+let frToastT=0;function frToast(x,go){const e=$('frtoast');e.textContent=x;e.classList.add('on');e.onclick=()=>{e.classList.remove('on');if(go)frView='chat',frCur=go;openFr()};clearTimeout(frToastT);frToastT=setTimeout(()=>e.classList.remove('on'),6000)}
+SZN.on('frn',m=>{if(!SZN_ID())return;const id=String(m.from||'');if(!idOk(id)||id===SZN_ID())return;const f=FR().find(x=>x.id===id);if(f){if(m.n&&f.n!==m.n){f.n=String(m.n).slice(0,16);frSave()}return}
+  const q=chQ();if(!q.some(x=>x.id===id)){q.push({id,n:String(m.n||'').slice(0,16)});chSave();frToast(t('fr_new').replace('{n}',m.n||fmtId(id)));try{click()}catch(e){}}frBadge();frList()});
+SZN.on('dm',m=>{if(!SZN_ID())return;const id=String(m.from||'');if(!idOk(id))return;const f=FR().find(x=>x.id===id),c=chOf(id),x=String(m.txt||'').slice(0,200);if(!x)return;
+  c.m.push({m:0,x,ts:+m.ts||Date.now()});if(c.m.length>100)c.m.splice(0,c.m.length-100);
+  if(!f){const q=chQ();if(!q.some(z=>z.id===id)){q.push({id,n:String(m.n||'').slice(0,16)})}}else if(m.n&&f.n!==m.n){f.n=String(m.n).slice(0,16);frSave()}
+  const open=$('frm').classList.contains('on')&&frView==='chat'&&frCur===id;
+  if(open){frChatPaint()}else{c.u=(c.u|0)+1;if(!m.old)frToast(t('fr_dm').replace('{n}',m.n||fmtId(id)).replace('{x}',x.slice(0,40)),f?id:'');try{click()}catch(e){}}
+  chSave();frBadge();frList()});
+/* ---- window ---- */
+let frView='list',frCur='';
+function openFr(){$('frm').classList.add('on');$('frt').textContent=t('fr_t');SZN.hello();frRender()}
+const frName=f=>{const p=mpFind(f.id);if(p&&p.presence.n&&p.presence.n!==f.n){f.n=String(p.presence.n).slice(0,16);frSave()}return frNm(f)};
+function frRender(){if(!$('frm').classList.contains('on'))return;const b=$('frbody');
+  if(!SZN_ID()){b.innerHTML='<div class="mpn">'+t('fr_guest')+'</div>';return}
+  if(frView==='chat'&&FR().some(f=>f.id===frCur))return frChat();frView='list';
+  b.innerHTML='<div class="mpx-top"><div class="mpx-id"><small>ID</small><b>'+fmtId(myId())+'</b><button class="sb2" id="fr-cp">'+t('acc_cp')+'</button></div></div>'
+    +'<div class="mprow"><input id="fr-id" inputmode="numeric" maxlength="14" placeholder="'+t('fr_ph')+' #0000 0000" autocomplete="off"><button class="pb" id="fr-add">'+t('fr_add_b')+'</button></div><div id="frmsg"></div><div id="fr-q"></div><h4>'+t('fr_t')+'</h4><div class="mpx-pl" id="fr-l"></div>';
+  $('fr-cp').onclick=()=>{try{navigator.clipboard.writeText(myId());$('frmsg').className='';$('frmsg').textContent=t('mp_cpc')}catch(e){}};
+  $('fr-add').onclick=frAdd;const i=$('fr-id');i.onkeydown=e=>{e.stopPropagation();if(e.key==='Enter')frAdd()};i.onkeyup=e=>e.stopPropagation();i.onpaste=e=>e.stopPropagation();
+  frList()}
+function frList(){if(!$('frm').classList.contains('on')||frView!=='list'||!$('fr-l'))return;chLoad();
+  const q=chQ();$('fr-q').innerHTML=q.length?'<h4>'+t('fr_req')+' · '+q.length+'</h4>'+q.map((r,i)=>'<div class="mpr"><span class="mpx-av t">'+escH((r.n||'?').slice(0,1).toUpperCase())+'</span><b>'+escH(r.n||'?')+'<small> '+fmtId(r.id)+'</small></b><button class="ok" data-qa="'+i+'">+ '+t('fr_add_b')+'</button><button data-qx="'+i+'">✕</button></div>').join(''):'';
+  $('fr-q').querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{const r=q[+b.dataset.qa];if(!r)return;if(!FR().some(f=>f.id===r.id)){FR().push({id:r.id,n:r.n});frSave();SZN.tx({t:'fr_add',to:r.id})}q.splice(+b.dataset.qa,1);chSave();frBadge();frList()});
+  $('fr-q').querySelectorAll('[data-qx]').forEach(b=>b.onclick=()=>{q.splice(+b.dataset.qx,1);chSave();frBadge();frList()});
+  const fl=FR().map((f,i)=>({f,i,p:mpFind(f.id)})).sort((a,b)=>(!!b.p-!!a.p)||0);
+  $('fr-l').innerHTML=fl.length?fl.map(({f,i,p})=>{const on=!!p,rm=on&&p.presence.rm,u=(CH[f.id]&&CH[f.id].u)|0,nm=frName(f);
+    return '<div class="mpr fr'+(on?' on':'')+'"><span class="mpx-av'+(on?' on':'')+'">'+escH(nm.slice(0,1).toUpperCase())+'<i class="dot"></i></span><b>'+escH(nm)+'<small> '+fmtId(f.id)+'</small></b><small>'+(rm?t('fr_in'):on?t('fr_on'):t('fr_of'))+'</small>'
+      +(rm?'<button class="ok" data-go="'+i+'" title="'+t('mp_goin')+'">▶</button>':'')+(on&&MP.code&&!rm?'<button data-iv="'+i+'" title="'+t('mp_inv')+'">✉</button>':'')+'<button data-ch="'+i+'">💬'+(u?'<em>'+u+'</em>':'')+'</button><button data-rm="'+i+'">✕</button></div>'}).join(''):'<div class="mpn">'+t('fr_none')+'</div>';
+  const l=$('fr-l');
+  l.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const p=mpFind(FR()[+b.dataset.go].id);if(p&&p.presence.rm){$('frm').classList.remove('on');mpJoin(String(p.presence.rm));openMp()}});
+  l.querySelectorAll('[data-iv]').forEach(b=>b.onclick=()=>{if(!MP.api)return;const s=Date.now();MP.api.presence({inv:{to:FR()[+b.dataset.iv].id,s,rm:MP.code}}).catch(()=>{});setTimeout(()=>MP.api.presence({inv:null}).catch(()=>{}),12000);b.textContent='✓'});
+  l.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{frCur=FR()[+b.dataset.ch].id;frView='chat';frRender()});
+  l.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{FR().splice(+b.dataset.rm,1);frSave();frList()})}
+function frDyn(){if(!$('frm').classList.contains('on'))return;if(frView==='list')frList();else{const f=FR().find(x=>x.id===frCur),h=$('frc-st');if(f&&h)h.textContent=mpFind(f.id)?t('fr_on'):t('fr_of')}}
+async function frAdd(){const m=$('frmsg'),v=($('fr-id').value||'').replace(/\D/g,'');m.className='er';
+  if(v.length!==8){m.textContent=t('mp_bad');return}if(v===SZN_ID()){m.textContent=t('mp_self');return}if(FR().some(f=>f.id===v)){m.textContent=t('mp_dup');return}
+  let n='';
+  if(SZN.ok()){m.className='';m.textContent=t('fr_wait');const w=await SZN.ask({t:'who',id:v},'who',4500,x=>x.id===v);
+    if(!w){m.className='er';m.textContent=t('fr_off');return}if(!w.found){m.className='er';m.textContent=t('fr_nf');return}n=String(w.n||'').slice(0,16)}
+  else{const p=mpFind(v);n=p?String(p.presence.n||'').slice(0,16):''}
+  FR().push({id:v,n});frSave();SZN.tx({t:'fr_add',to:v});$('fr-id').value='';m.className='';m.textContent=t('fr_ok').replace('{n}',n||fmtId(v));frList()}
+function frChat(){const b=$('frbody'),f=FR().find(x=>x.id===frCur);if(!f){frView='list';return frRender()}
+  b.innerHTML='<div class="frch-h"><button class="sb2" id="frc-b">‹ '+t('fr_back')+'</button><span class="mpx-av'+(mpFind(f.id)?' on':'')+'">'+escH(frName(f).slice(0,1).toUpperCase())+'<i class="dot"></i></span><b>'+escH(frName(f))+'</b><small id="frc-st">'+(mpFind(f.id)?t('fr_on'):t('fr_of'))+'</small></div><div class="frch-m" id="frc-m"></div><div class="mprow"><input id="frc-i" maxlength="200" autocomplete="off" placeholder="'+t('fr_msg')+'"><button class="pb" id="frc-s">➤</button></div><div id="frmsg"></div>';
+  const c=chOf(f.id);c.u=0;chSave();frBadge();frChatPaint();
+  $('frc-b').onclick=()=>{frView='list';frRender()};$('frc-s').onclick=frSend;const i=$('frc-i');i.onkeydown=e=>{e.stopPropagation();if(e.key==='Enter')frSend()};i.onkeyup=e=>e.stopPropagation();i.onpaste=e=>e.stopPropagation()}
+function frChatPaint(){const e=$('frc-m');if(!e)return;const a=chOf(frCur).m;e.innerHTML=a.length?a.map(x=>'<div class="frm'+(x.m?' me':'')+'"><span>'+escH(x.x)+'</span><small>'+hhmm(x.ts)+'</small></div>').join(''):'<div class="frch-e">'+t('fr_empty')+'</div>';e.scrollTop=e.scrollHeight;const c=chOf(frCur);if(c.u){c.u=0;chSave();frBadge()}}
+function frSend(){const i=$('frc-i'),x=i.value.trim().slice(0,200),m=$('frmsg');if(!x)return;if(!SZN.ok()){m.className='er';m.textContent=t('fr_noc');return}
+  SZN.tx({t:'dm',to:frCur,txt:x});const c=chOf(frCur);c.m.push({m:1,x,ts:Date.now()});if(c.m.length>100)c.m.splice(0,c.m.length-100);chSave();i.value='';m.textContent='';frChatPaint();i.focus()}
+$('frb').onclick=openFr;$('frx').onclick=()=>$('frm').classList.remove('on');
+/* ---- leaderboard ---- */
+let LB={rows:null,tab:'k',err:false,tm:0};
+function openLb(){$('lbm').classList.add('on');$('lbt').textContent=t('lb_t');SZN.hello();lbFetch();lbRender()}
+function lbFetch(){LB.err=false;if(!SZN.ok()){LB.err=true;lbRender();return}SZN.tx({t:'lb_get'});clearTimeout(LB.tm);LB.tm=setTimeout(()=>{if(!LB.rows){LB.err=true;lbRender()}},6000)}
+SZN.on('lb',m=>{clearTimeout(LB.tm);LB.rows=Array.isArray(m.rows)?m.rows:[];LB.err=false;lbRender()});
+const lbKd=r=>r.d?r.k/r.d:r.k,lbHs=r=>r.k?Math.round(r.hs/r.k*100):0;
+function lbRender(){if(!$('lbm').classList.contains('on'))return;const b=$('lbbody'),me=SZN_ID();
+  const T=[['k','lb_k'],['kd','lb_kd'],['w','lb_w'],['hs','lb_hs']];
+  let h='<div class="lb-tabs">'+T.map(([k,l])=>'<button class="'+(LB.tab===k?'on':'')+'" data-lt="'+k+'">'+t(l)+'</button>').join('')+'</div>';
+  if(!me)h+='<div class="mpn">'+t('lb_guest')+'</div>';
+  if(LB.err&&!LB.rows)h+='<div class="mpn er">'+t('lb_off')+'</div><button class="sb2" id="lb-r">↻</button>';
+  else if(!LB.rows)h+='<div class="mpn">'+t('lb_load')+'</div>';
+  else if(!LB.rows.length)h+='<div class="mpn">'+t('lb_empty')+'</div>';
+  else{const key={k:r=>r.k,kd:r=>r.m>=3?lbKd(r):-1,w:r=>r.w,hs:r=>r.k>=10?lbHs(r):-1}[LB.tab];
+    const a=LB.rows.slice().sort((x,y)=>key(y)-key(x)||y.k-x.k).filter(r=>key(r)>=0);const mi=a.findIndex(r=>r.id===me);
+    h+='<div class="lb-h"><span>#</span><span>'+t('lb_pl')+'</span><span>'+t('lb_k')+'</span><span>K/D</span><span>'+t('lb_w')+'</span><span>HS</span></div><div class="lb-l">'
+      +a.slice(0,50).map((r,i)=>'<div class="lb-r'+(r.id===me?' me':'')+(i<3?' top'+(i+1):'')+'"><span>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</span><b>'+escH(r.n)+'</b><span>'+r.k+'</span><span>'+lbKd(r).toFixed(2)+'</span><span>'+r.w+'</span><span>'+lbHs(r)+'%</span></div>').join('')+'</div>';
+    if(mi>=0)h+='<div class="lb-you">'+t('lb_you').replace('{n}',mi+1)+'</div>'}
+  b.innerHTML=h;b.querySelectorAll('[data-lt]').forEach(x=>x.onclick=()=>{LB.tab=x.dataset.lt;lbRender()});const r=$('lb-r');if(r)r.onclick=lbFetch}
+$('lbb').onclick=openLb;$('lbx').onclick=()=>$('lbm').classList.remove('on');
+function lbSubmit(res,adm){if(adm||!SZN_ID()||!SZN.ok())return;SZN.hello();SZN.tx({t:'lb_submit',k:S_.k|0,d:S_.d|0,hs:S_.hs|0,r:res})}
+frBadge();
+
 function doStart(){
   isTouch=mode==='touch';document.body.classList.toggle('touch',isTouch);
   if(!started){started=true;WP=ECON()?[null,mk1(CAT[team].s[0]),Object.assign({},KN)]:mkW();vms=WP.map(w=>w?vm(w):{visible:false});setW(WP[0]?0:1);setTeamTag();document.body.classList.add('started');startRound()}

@@ -1,162 +1,330 @@
-/* Strike Zone server: rooms/presence relay, accounts, friends, DMs, leaderboard.
-   Run: npm install && node server.js        (PORT env var, DATA_DIR env var for storage)
-   Client protocol (JSON over WebSocket):
-     -> hello{id,n}  who{id}  fr_add{to}  dm{to,txt}  lb_get  lb_submit{k,d,hs,r,e}
-     -> j{r}  l{r}  p{r,p}           (join / leave / merge presence patch in a room)
-     <- w{id}  s{r,peers}  p{r,peer,p}  x{r,peer}  e{r}  who{id,found,n}  frn{from,n}  dm{from,n,txt,ts,old}  lb{rows}  */
-const http = require('http'), fs = require('fs'), path = require('path');
+'use strict';
+/*
+  Strike Zone — game server
+  1) serves index.html (the game) over HTTP
+  2) WebSocket relay on the same address (the game connects to wss://<your-host>)
+
+  Protocol (taken from index.html):
+    server -> client  {t:'w', id}                          welcome, your peer id
+    client -> server  {t:'j', r}                           join room r
+                      {t:'p', r, p}                        merge presence p into your room state (null = delete key)
+                      {t:'l', r}                           leave room r
+    server -> client  {t:'s', r, peers:[[id,presence]]}    snapshot after join
+                      {t:'p', r, peer, p}                  full presence of a peer changed
+                      {t:'x', r, peer}                     peer left
+                      {t:'e', r}                           room is full
+    accounts (8-digit ID):
+                      {t:'hello', id, n}                   sign in
+                      {t:'who', id}            -> {t:'who', id, found, n}
+                      {t:'fr_add', to}         -> {t:'frn', from, n} to the other player
+                      {t:'dm', to, txt}        -> {t:'dm', from, n, txt, ts[, old:true]}
+                      {t:'lb_submit', k, d, hs, r, e}
+                      {t:'lb_get'}             -> {t:'lb', rows:[{id,n,k,d,hs,w,m,e}]}
+*/
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 
-const PORT = +process.env.PORT || 8080;
-const DATA_DIR = process.env.DATA_DIR || __dirname;
-const DATA_FILE = path.join(DATA_DIR, 'data.json');
-const ROOM_CAP = 10, LOBBY = 'sz-lobby', MAX_ROOMS_PER_CONN = 4;
+const PORT = process.env.PORT || 3000;
+const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data', 'strike-zone.json');
+const LOBBY = 'sz-lobby';
+const MAX_ROOM = 16;               // players per room (the lobby has no limit)
+const MAX_PRESENCE = 100000;       // bytes of one serialized presence message
 const ID_RE = /^[1-9]\d{7}$/;
+const ROOM_RE = /^[a-z0-9_-]{1,40}$/i;
 
-/* ---------- persistent store ---------- */
-let DB = { users: {}, stats: {}, inbox: {} };   // users[id]={n}, stats[id]={n,k,d,hs,w,l,dr,m,e}, inbox[id]=[msgs]
-try { DB = Object.assign(DB, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) {}
+/* ---------------- storage (JSON file, saved every few seconds) ---------------- */
+let db = { users: {}, lb: {}, q: {} };   // users[id]={n,ts}  lb[id]=row  q[id]=[queued dm / friend requests]
+try { db = Object.assign(db, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) { /* first start */ }
 let dirty = false;
-const save = () => { if (!dirty) return; dirty = false;
-  try { fs.mkdirSync(DATA_DIR, { recursive: true }); fs.writeFileSync(DATA_FILE + '.tmp', JSON.stringify(DB)); fs.renameSync(DATA_FILE + '.tmp', DATA_FILE); } catch (e) { console.error('save failed', e.message); dirty = true; } };
-setInterval(save, 10000).unref();
-const touch = () => { dirty = true; };
-
-/* ---------- state ---------- */
-const rooms = new Map();          // name -> Map(peerId -> {ws, p})
-const online = new Map();         // accountId -> Set(ws)
-let seq = 0;
-const cleanName = s => String(s == null ? '' : s).replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 16);
-const send = (ws, o) => { if (ws.readyState === 1) ws.send(JSON.stringify(o)); };
-const toUser = (id, o) => { const s = online.get(id); if (!s) return false; s.forEach(w => send(w, o)); return s.size > 0; };
-const queue = (id, o) => { const q = DB.inbox[id] || (DB.inbox[id] = []); q.push(o); if (q.length > 100) q.shift(); touch(); };
-
-function leaveRoom(ws, name) {
-  const r = rooms.get(name); if (!r) return;
-  if (r.delete(ws.pid)) r.forEach(m => send(m.ws, { t: 'x', r: name, peer: ws.pid }));
-  if (!r.size) rooms.delete(name);
-  ws.rooms.delete(name);
+const save = () => { dirty = true; };
+function flush() {
+  if (!dirty) return;
+  dirty = false;
+  try {
+    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+    const tmp = DATA_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(db));
+    fs.renameSync(tmp, DATA_FILE);
+  } catch (e) { console.error('save failed:', e.message); }
 }
+setInterval(flush, 5000).unref();
 
-/* ---------- message handlers ---------- */
-const H = {
-  hello(ws, m) {
-    const id = String(m.id || ''), n = cleanName(m.n);
-    if (!ID_RE.test(id) || !n) return;
-    if (ws.acc && ws.acc !== id) { const s = online.get(ws.acc); if (s) { s.delete(ws); if (!s.size) online.delete(ws.acc); } }
-    ws.acc = id;
-    if (!online.has(id)) online.set(id, new Set());
-    online.get(id).add(ws);
-    const u = DB.users[id] || (DB.users[id] = {});
-    if (u.n !== n) { u.n = n; touch(); }
-    if (DB.stats[id] && DB.stats[id].n !== n) { DB.stats[id].n = n; touch(); }
-    const q = DB.inbox[id];                       // deliver anything received while offline
-    if (q && q.length) { q.forEach(o => send(ws, o)); delete DB.inbox[id]; touch(); }
-  },
-  who(ws, m) {
-    const id = String(m.id || ''), u = ID_RE.test(id) && DB.users[id];
-    send(ws, { t: 'who', id, found: !!u, n: u ? u.n : '' });
-  },
-  fr_add(ws, m) {
-    const to = String(m.to || ''); if (!ws.acc || !ID_RE.test(to) || to === ws.acc || !DB.users[to]) return;
-    const o = { t: 'frn', from: ws.acc, n: DB.users[ws.acc].n };
-    if (!toUser(to, o)) queue(to, o);
-  },
-  dm(ws, m) {
-    const to = String(m.to || ''), txt = String(m.txt == null ? '' : m.txt).slice(0, 200);
-    if (!ws.acc || !ID_RE.test(to) || !txt.trim() || !DB.users[to]) return;
-    const now = Date.now();
-    if (now - (ws.lastDm || 0) < 250) return; ws.lastDm = now;      // flood guard
-    const o = { t: 'dm', from: ws.acc, n: DB.users[ws.acc].n, txt, ts: now };
-    if (!toUser(to, o)) queue(to, Object.assign({}, o, { old: 1 }));
-  },
-  lb_get(ws) {
-    const rows = Object.entries(DB.stats).map(([id, s]) => ({ id, n: s.n, k: s.k, d: s.d, hs: s.hs, w: s.w, m: s.m, e: s.e | 0 }));
-    send(ws, { t: 'lb', rows });
-  },
-  lb_submit(ws, m) {
-    if (!ws.acc || !DB.users[ws.acc]) return;
-    const now = Date.now(); if (now - (ws.lastLb || 0) < 20000) return; ws.lastLb = now;   // one result per 20 s
-    const cl = (v, max) => Math.max(0, Math.min(max, v | 0));
-    const k = cl(m.k, 60), d = cl(m.d, 60), hs = Math.min(cl(m.hs, 60), k), r = m.r;
-    if (r !== 'w' && r !== 'l' && r !== 'd') return;
-    const s = DB.stats[ws.acc] || (DB.stats[ws.acc] = { n: DB.users[ws.acc].n, k: 0, d: 0, hs: 0, w: 0, l: 0, dr: 0, m: 0, e: 0 });
-    s.n = DB.users[ws.acc].n; s.k += k; s.d += d; s.hs += hs; s.m++;
-    if (r === 'w') s.w++; else if (r === 'l') s.l++; else s.dr = (s.dr | 0) + 1;
-    if (m.e != null) s.e = cl(m.e, 99999);
-    touch();
-  },
-  j(ws, m) {
-    const name = String(m.r || '').slice(0, 40); if (!name) return;
-    if (ws.rooms.has(name)) { /* re-join after reconnect keeps same peer */ }
-    else if (ws.rooms.size >= MAX_ROOMS_PER_CONN) return send(ws, { t: 'e', r: name });
-    let r = rooms.get(name);
-    if (!r) rooms.set(name, r = new Map());
-    if (!r.has(ws.pid) && name !== LOBBY && r.size >= ROOM_CAP) return send(ws, { t: 'e', r: name });
-    const mine = r.get(ws.pid) || { ws, p: {} }; mine.ws = ws; r.set(ws.pid, mine); ws.rooms.add(name);
-    send(ws, { t: 's', r: name, peers: [...r].filter(([id]) => id !== ws.pid).map(([id, x]) => [id, x.p]) });
-    r.forEach((x, id) => { if (id !== ws.pid) send(x.ws, { t: 'p', r: name, peer: ws.pid, p: mine.p }); });
-  },
-  l(ws, m) { leaveRoom(ws, String(m.r || '')); },
-  p(ws, m) {
-    const name = String(m.r || ''), r = rooms.get(name), me = r && r.get(ws.pid);
-    if (!me || !m.p || typeof m.p !== 'object') return;
-    for (const k in m.p) { if (m.p[k] === null) delete me.p[k]; else me.p[k] = m.p[k]; }
-    if (JSON.stringify(me.p).length > 8000) { me.p = {}; return; }      // runaway presence guard
-    r.forEach((x, id) => { if (id !== ws.pid) send(x.ws, { t: 'p', r: name, peer: ws.pid, p: me.p }); });
-  }
+/* ---------------- static files ---------------- */
+const STATIC = new Set(['index.html', 'sw.js', 'manifest.json', 'manifest.webmanifest', 'favicon.ico']);
+const TYPES = {
+  '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8',
+  '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon'
 };
+const fileCache = new Map();   // name -> {etag, raw, gz}
 
-/* ---------- http + ws ---------- */
-/* the same service also serves the game: index.html next to server.js (or one folder up) */
-const zlib = require('zlib');
-const PAGE_FILES = [path.join(__dirname, 'index.html'), path.join(__dirname, '..', 'index.html')];
-let page = null;   // {file, mtime, raw, gz}
-function loadPage() {
-  for (const f of PAGE_FILES) {
-    try { const st = fs.statSync(f);
-      if (page && page.file === f && page.mtime === st.mtimeMs) return page;
-      const raw = fs.readFileSync(f); page = { file: f, mtime: st.mtimeMs, raw, gz: zlib.gzipSync(raw, { level: 6 }) }; return page;
-    } catch (e) {}
+function getFile(name) {
+  const file = path.join(__dirname, name);
+  let st;
+  try { st = fs.statSync(file); } catch (e) { return null; }
+  const etag = '"' + st.size + '-' + Math.floor(st.mtimeMs) + '"';
+  let c = fileCache.get(name);
+  if (!c || c.etag !== etag) {
+    const raw = fs.readFileSync(file);
+    c = { etag, raw, gz: zlib.gzipSync(raw, { level: 6 }) };
+    fileCache.set(name, c);
   }
-  return null;
+  return c;
 }
-const server = http.createServer((req, res) => {
-  const url = (req.url || '/').split('?')[0];
-  if (url === '/health') { res.writeHead(200, { 'content-type': 'text/plain' }); return res.end('Strike Zone server OK \u00b7 online ' + wss.clients.size + '\n'); }
-  if (url === '/' || url === '/index.html') {
-    const p = loadPage();
-    if (p) {
-      const gz = /\bgzip\b/.test(req.headers['accept-encoding'] || '');
-      res.writeHead(200, Object.assign({ 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache', vary: 'accept-encoding' }, gz ? { 'content-encoding': 'gzip' } : {}));
-      return res.end(gz ? p.gz : p.raw);
-    }
-  }
-  res.writeHead(url === '/' ? 200 : 404, { 'content-type': 'text/plain; charset=utf-8' });
-  res.end(url === '/' ? 'Strike Zone server OK \u00b7 online ' + wss.clients.size + ' (index.html not found next to server.js)\n' : 'Not found\n');
-});
-const wss = new WebSocketServer({ server, maxPayload: 64 * 1024 });
-wss.on('connection', ws => {
-  ws.pid = 'p' + (++seq).toString(36) + Math.random().toString(36).slice(2, 6);
-  ws.rooms = new Set(); ws.alive = true; ws.acc = '';
-  ws.on('pong', () => { ws.alive = true; });
-  send(ws, { t: 'w', id: ws.pid });
-  let budget = 0, t0 = Date.now();
-  ws.on('message', data => {
-    const now = Date.now(); if (now - t0 > 1000) { t0 = now; budget = 0; }
-    if (++budget > 60) return;                                     // 60 msgs / s per connection
-    let m; try { m = JSON.parse(data); } catch (e) { return; }
-    if (!m || typeof m.t !== 'string' || !Object.prototype.hasOwnProperty.call(H, m.t)) return;
-    try { H[m.t](ws, m); } catch (e) { console.error('handler', m.t, e.message); }
-  });
-  ws.on('close', () => {
-    [...ws.rooms].forEach(n => leaveRoom(ws, n));
-    const s = ws.acc && online.get(ws.acc); if (s) { s.delete(ws); if (!s.size) online.delete(ws.acc); }
-  });
-  ws.on('error', () => {});
-});
-setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate(); ws.alive = false; try { ws.ping(); } catch (e) {} }), 30000).unref();
 
-process.on('SIGTERM', () => { dirty = true; save(); process.exit(0); });
-process.on('SIGINT', () => { dirty = true; save(); process.exit(0); });
-server.listen(PORT, () => console.log('Strike Zone server on :' + PORT));
+function onRequest(req, res) {
+  let name;
+  try { name = decodeURIComponent(new URL(req.url, 'http://x').pathname).replace(/^\/+/, '') || 'index.html'; }
+  catch (e) { res.writeHead(400); return res.end(); }
+
+  if (name === 'health') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify({ ok: true, players: wss.clients.size, rooms: rooms.size }));
+  }
+  if (!STATIC.has(name)) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
+
+  const c = getFile(name);
+  if (!c) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
+  if (req.headers['if-none-match'] === c.etag) { res.writeHead(304); return res.end(); }
+
+  const h = {
+    'Content-Type': TYPES[path.extname(name)] || 'application/octet-stream',
+    'Cache-Control': 'no-cache', 'ETag': c.etag, 'Vary': 'Accept-Encoding'
+  };
+  if (/\bgzip\b/.test(req.headers['accept-encoding'] || '')) {
+    h['Content-Encoding'] = 'gzip'; h['Content-Length'] = c.gz.length;
+    res.writeHead(200, h); return res.end(c.gz);
+  }
+  h['Content-Length'] = c.raw.length;
+  res.writeHead(200, h); res.end(c.raw);
+}
+
+const server = http.createServer(onRequest);
+const wss = new WebSocketServer({ server, maxPayload: 128 * 1024, perMessageDeflate: false });
+
+/* ---------------- rooms ---------------- */
+const rooms = new Map();   // name -> Map(ws -> presence)
+
+const tx = (ws, o) => { if (ws.readyState === 1) ws.send(JSON.stringify(o)); };
+
+function bcast(room, str, except) {
+  for (const w of room.keys()) if (w !== except && w.readyState === 1) w.send(str);
+}
+
+function join(ws, name) {
+  let room = rooms.get(name);
+  if (!room) { room = new Map(); rooms.set(name, room); }
+  if (!room.has(ws)) {
+    if (name !== LOBBY && room.size >= MAX_ROOM) {
+      if (!room.size) rooms.delete(name);
+      return tx(ws, { t: 'e', r: name, e: 'full' });
+    }
+    room.set(ws, {});
+    ws.rooms.add(name);
+  }
+  const peers = [];
+  for (const [w, p] of room) if (w !== ws) peers.push([w.pid, p]);
+  tx(ws, { t: 's', r: name, peers });
+}
+
+function leave(ws, name) {
+  const room = rooms.get(name);
+  if (!room || !room.delete(ws)) return;
+  ws.rooms.delete(name);
+  if (!room.size) rooms.delete(name);
+  else bcast(room, JSON.stringify({ t: 'x', r: name, peer: ws.pid }));
+}
+
+function presence(ws, name, p) {
+  const room = rooms.get(name);
+  if (!room || !room.has(ws) || !p || typeof p !== 'object' || Array.isArray(p)) return;
+  const next = Object.assign({}, room.get(ws));
+  for (const k in p) {
+    if (k === '__proto__') continue;
+    if (p[k] === null) delete next[k]; else next[k] = p[k];
+  }
+  // the client replaces the peer's presence with what it receives, so we always send the full merged object
+  const str = JSON.stringify({ t: 'p', r: name, peer: ws.pid, p: next });
+  if (str.length > MAX_PRESENCE) return;
+  room.set(ws, next);
+  bcast(room, str, ws);
+}
+
+/* ---------------- accounts: friends, private messages ---------------- */
+const online = new Map();   // account id -> Set(ws)
+const cleanName = n => String(n || '').replace(/[\u0000-\u001f]/g, '').slice(0, 16);
+
+function unbind(ws) {
+  if (!ws.acc) return;
+  const s = online.get(ws.acc);
+  if (s) { s.delete(ws); if (!s.size) online.delete(ws.acc); }
+  ws.acc = null;
+}
+
+function queue(id, item, cap) {
+  const q = db.q[id] || (db.q[id] = []);
+  q.push(item);
+  while (q.length > cap) q.shift();
+  save();
+}
+
+// deliver to every open tab of this account; if nobody is online, keep it for the next sign-in
+function deliver(id, msg, cap) {
+  const s = online.get(id);
+  if (s && s.size) { for (const w of s) tx(w, msg); return; }
+  queue(id, Object.assign({}, msg, msg.t === 'dm' ? { old: true } : {}), cap);
+}
+
+function hello(ws, id, n) {
+  id = String(id || '');
+  if (!ID_RE.test(id)) return;
+  n = cleanName(n);
+  if (ws.acc !== id) {
+    unbind(ws);
+    ws.acc = id;
+    (online.get(id) || online.set(id, new Set()).get(id)).add(ws);
+  }
+  ws.accName = n || id;
+  db.users[id] = { n: ws.accName, ts: Date.now() };
+  if (db.lb[id]) db.lb[id].n = ws.accName;
+  save();
+  const q = db.q[id];
+  if (q && q.length) { delete db.q[id]; for (const m of q) tx(ws, m); save(); }
+}
+
+/* ---------------- leaderboard ---------------- */
+const int = (x, max) => Math.max(0, Math.min(max, Math.floor(+x) || 0));
+let lbCache = { at: 0, rows: [] };
+
+function lbSubmit(ws, m) {
+  if (!ws.acc) return;
+  const now = Date.now();
+  if (now - (ws.lastLb || 0) < 3000) return;
+  ws.lastLb = now;
+  const row = db.lb[ws.acc] || (db.lb[ws.acc] = { id: ws.acc, n: ws.accName, k: 0, d: 0, hs: 0, w: 0, m: 0, e: 0 });
+  row.n = ws.accName;
+  row.k = int(m.k, 1e7);               // the client sends its running totals
+  row.d = int(m.d, 1e7);
+  row.hs = Math.min(int(m.hs, 1e7), row.k);
+  row.e = int(m.e, 10000);
+  row.m++;                              // one submit = one finished match
+  if (m.r === 'w') row.w++;
+  row.ts = now;
+  lbCache.at = 0;
+  save();
+}
+
+function lbRows() {
+  const now = Date.now();
+  if (now - lbCache.at > 3000) {
+    lbCache = {
+      at: now,
+      rows: Object.values(db.lb)
+        .sort((a, b) => (b.e - a.e) || (b.k - a.k))
+        .slice(0, 500)
+        .map(({ id, n, k, d, hs, w, m, e }) => ({ id, n, k, d, hs, w, m, e }))
+    };
+  }
+  return lbCache.rows;
+}
+
+/* ---------------- connections ---------------- */
+wss.on('connection', ws => {
+  ws.pid = crypto.randomBytes(6).toString('hex');
+  ws.rooms = new Set();
+  ws.acc = null; ws.accName = '';
+  ws.alive = true; ws.tok = 150; ws.tt = Date.now();
+  tx(ws, { t: 'w', id: ws.pid });
+
+  ws.on('pong', () => { ws.alive = true; });
+  ws.on('error', () => {});
+
+  ws.on('message', (data, isBinary) => {
+    ws.alive = true;
+    if (isBinary) return;
+    // flood protection: ~100 messages per second, bursts up to 150
+    const now = Date.now();
+    ws.tok = Math.min(150, ws.tok + (now - ws.tt) * 0.1); ws.tt = now;
+    if (ws.tok < 1) return;
+    ws.tok--;
+
+    let m;
+    try { m = JSON.parse(data.toString()); } catch (e) { return; }
+    if (!m || typeof m !== 'object') return;
+
+    switch (m.t) {
+      case 'j': {
+        const r = String(m.r || '');
+        if (ROOM_RE.test(r)) join(ws, r);
+        break;
+      }
+      case 'l': {
+        const r = String(m.r || '');
+        if (ROOM_RE.test(r)) leave(ws, r);
+        break;
+      }
+      case 'p': {
+        const r = String(m.r || '');
+        if (ROOM_RE.test(r)) presence(ws, r, m.p);
+        break;
+      }
+      case 'hello':
+        hello(ws, m.id, m.n);
+        break;
+      case 'who': {
+        const id = String(m.id || '');
+        if (!ID_RE.test(id)) break;
+        const u = db.users[id];
+        tx(ws, { t: 'who', id, found: !!u, n: u ? u.n : '' });
+        break;
+      }
+      case 'fr_add': {
+        const to = String(m.to || '');
+        if (!ws.acc || !ID_RE.test(to) || to === ws.acc || !db.users[to]) break;
+        const q = db.q[to];
+        if (!online.get(to) && q && q.some(x => x.t === 'frn' && x.from === ws.acc)) break;   // no duplicate requests
+        deliver(to, { t: 'frn', from: ws.acc, n: ws.accName }, 50);
+        break;
+      }
+      case 'dm': {
+        const to = String(m.to || '');
+        const txt = String(m.txt || '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 200);
+        if (!ws.acc || !txt || !ID_RE.test(to) || to === ws.acc || !db.users[to]) break;
+        if (now - (ws.lastDm || 0) < 400) break;
+        ws.lastDm = now;
+        deliver(to, { t: 'dm', from: ws.acc, n: ws.accName, txt, ts: now }, 100);
+        break;
+      }
+      case 'lb_submit':
+        lbSubmit(ws, m);
+        break;
+      case 'lb_get':
+        tx(ws, { t: 'lb', rows: lbRows() });
+        break;
+    }
+  });
+
+  ws.on('close', () => {
+    for (const name of [...ws.rooms]) leave(ws, name);
+    unbind(ws);
+  });
+});
+
+// keep connections alive (Render closes idle ones) and drop dead sockets
+setInterval(() => {
+  for (const ws of wss.clients) {
+    if (!ws.alive) { ws.terminate(); continue; }
+    ws.alive = false;
+    try { ws.ping(); } catch (e) { /* ignore */ }
+  }
+}, 25000).unref();
+
+server.listen(PORT, () => console.log('Strike Zone server on port ' + PORT));
+
+for (const sig of ['SIGTERM', 'SIGINT']) {
+  process.on(sig, () => { flush(); process.exit(0); });
+}

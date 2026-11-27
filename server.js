@@ -108,9 +108,32 @@ const H = {
 };
 
 /* ---------- http + ws ---------- */
+/* the same service also serves the game: index.html next to server.js (or one folder up) */
+const zlib = require('zlib');
+const PAGE_FILES = [path.join(__dirname, 'index.html'), path.join(__dirname, '..', 'index.html')];
+let page = null;   // {file, mtime, raw, gz}
+function loadPage() {
+  for (const f of PAGE_FILES) {
+    try { const st = fs.statSync(f);
+      if (page && page.file === f && page.mtime === st.mtimeMs) return page;
+      const raw = fs.readFileSync(f); page = { file: f, mtime: st.mtimeMs, raw, gz: zlib.gzipSync(raw, { level: 6 }) }; return page;
+    } catch (e) {}
+  }
+  return null;
+}
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'content-type': 'text/plain', 'access-control-allow-origin': '*' });
-  res.end('Strike Zone server OK · online ' + wss.clients.size + '\n');      // health check / keeps Render awake when pinged
+  const url = (req.url || '/').split('?')[0];
+  if (url === '/health') { res.writeHead(200, { 'content-type': 'text/plain' }); return res.end('Strike Zone server OK \u00b7 online ' + wss.clients.size + '\n'); }
+  if (url === '/' || url === '/index.html') {
+    const p = loadPage();
+    if (p) {
+      const gz = /\bgzip\b/.test(req.headers['accept-encoding'] || '');
+      res.writeHead(200, Object.assign({ 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache', vary: 'accept-encoding' }, gz ? { 'content-encoding': 'gzip' } : {}));
+      return res.end(gz ? p.gz : p.raw);
+    }
+  }
+  res.writeHead(url === '/' ? 200 : 404, { 'content-type': 'text/plain; charset=utf-8' });
+  res.end(url === '/' ? 'Strike Zone server OK \u00b7 online ' + wss.clients.size + ' (index.html not found next to server.js)\n' : 'Not found\n');
 });
 const wss = new WebSocketServer({ server, maxPayload: 64 * 1024 });
 wss.on('connection', ws => {

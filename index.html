@@ -2236,16 +2236,40 @@ const H_PC=[{sh:0x2b3d58,pn:0x222c3d,vs:0x14181f,hm:0x2a3138},{sh:0x2f3b4a,pn:0x
 function legAnim(legs,ph,amp){const c=Math.cos(ph);for(let i=0;i<2;i++){const sg=i?-1:1,l=legs[i];l.rotation.x=Math.sin(ph)*amp*sg;const k=l.userData.knee;if(k)k.rotation.x=amp>.01?-(Math.max(0,c*sg)*amp*1.35+amp*.14):0}}
 /* ===== another player's weapon WITH his skin: the same model + materials as in first person ===== */
 function mpSkinItem(id,wn){const it=id?SHOP.items.find(i=>i.id===id):null;if(!it)return null;return (wn==='Knife'?!!it.kv:(it.cat==='w'&&it.wp===wn))?it:null}
-function mpSkinGun(d){try{const it=d&&d.sk?mpSkinItem(d.sk,d.n):null;if(!it)return null;
+/* glue the still parts that share a material into one mesh (fewer draw calls); the moving parts stay separate */
+function mpPack(g){const by=new Map();for(const m of g.children.slice()){if(!m.isMesh||['mag','bolt','pump'].includes(m.userData.rl))continue;let l=by.get(m.material);if(!l)by.set(m.material,l=[]);l.push(m)}
+  by.forEach((list,mat)=>{if(list.length<2)return;const out={position:[],normal:[],uv:[]};
+    for(const m of list){m.updateMatrix();const q=m.geometry.index?m.geometry.toNonIndexed():m.geometry.clone();q.applyMatrix4(m.matrix);for(const k in out){const a=q.attributes[k].array;for(let i=0;i<a.length;i++)out[k].push(a[i])}q.dispose()}
+    const ge=new THREE.BufferGeometry();for(const k in out)ge.setAttribute(k,new THREE.Float32BufferAttribute(out[k],k==='uv'?2:3));
+    list.forEach(m=>{g.remove(m);m.geometry.dispose()});g.add(new THREE.Mesh(ge,mat))})}
+/* the same model as in first person (with or without a skin), with its moving parts */
+function mpGunModel(d){try{if(!d||!d.mp)return null;const it=d.sk?mpSkinItem(d.sk,d.n):null,knife=d.n==='Knife';if(!knife&&!GMT[d.n])return null;
   const g=new THREE.Group(),M=(c,r=.5,m=.6)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m}),mine=CFG.eq;
-  const add=(a,mt,x,y,z,rx)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(...a),mt);m.position.set(x,y,z);if(rx)m.rotation.x=rx;g.add(m);return m};
+  const into=o=>(a,mt,x,y,z,rx)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(...a),mt);m.position.set(x,y,z);if(rx)m.rotation.x=rx;o.add(m);return m};
   /* the skin code reads CFG.eq, so for this synchronous build it holds the other player's skin */
-  CFG.eq=d.n==='Knife'?{k:it.id}:{[d.n==='AK-47'?'w':'w:'+d.n]:it.id};
-  try{if(d.n==='Knife'){const f={bfl:knBfl,kar:knKar,bay:knBay,stl:knStl,jkm:knJkm}[it.kv];if(!f)return null;f(g,add,M)}
-    else{if(!GMT[d.n])return null;const sl=M(0x6e5b3b,.9,0),gv=M(0x151515,.9,.1),w={n:d.n};buildGun(w,add,sl,gv);szSkinPlanar(g,w);
-      g.children.slice().forEach(m=>{if(m.material===sl||m.material===gv)g.remove(m)})}}
+  CFG.eq=!it?{}:knife?{k:it.id}:{[d.n==='AK-47'?'w':'w:'+d.n]:it.id};
+  try{if(knife){const k=new THREE.Group(),ka=into(k),f=it&&{bfl:knBfl,kar:knKar,bay:knBay,stl:knStl,jkm:knJkm}[it.kv];
+      if(f)f(k,ka,M);else BGC['Knife'].forEach(p=>ka([p[0],p[1],p[2]],M(p[3],.35,.8),p[4],p[5],p[6],p[7]));
+      knRig(g,k,f?it.kv:null);g.add(k)}
+    else{const sl=M(0x6e5b3b,.9,0),gv=M(0x151515,.9,.1),w={n:d.n};buildGun(w,into(g),sl,gv);szSkinPlanar(g,w);
+      g.children.slice().forEach(m=>{if(m.material===sl||m.material===gv)g.remove(m)});mpPack(g)}}
   finally{CFG.eq=mine}
-  return g}catch(e){console.warn('remote skin',e);return null}}
+  return g}catch(e){console.warn('remote weapon',e);return null}}
+/* weapon animations of another player. The first-person animation code reads P and WK, so for this call they hold HIS state */
+function mpGunAnim(r,dt){const v=r.gm;if(!v)return;const keep={ins:P.ins,reload:P.reload,recoil:P.recoil,alive:P.alive},dr=WK.dr;
+  try{v.position.set(0,0,0);v.rotation.set(0,0,0);rlRest(v);r.drT=(r.drT||0)+dt;
+    const I=r.ins;if(I){const D=INS_K[I.k];if(!D||r.rl||I.t+dt>=D.d)r.ins=null}
+    P.alive=true;P.reload=0;P.recoil=r.kick||0;P.ins=r.ins||null;WK.dr=r.drT;
+    const kind=r.knife?'':rlKind({n:r.wn});
+    if(r.rl&&!r.knife&&kind!=='dual'){const q=r.rd||[],rt=+q[0]>0?+q[0]:2.5;P.reload=Math.max(.001,rt-(r.rlT||0));
+      rlApply(v,{n:r.wn,rt,a:q[1]|0,mag:q[2]|0||30,res:q[3]|0},1);const R=v.userData.rlr;R.arm.visible=false;P.reload=0}
+    else if(!r.knife&&kind!=='dual'&&r.kick>0){const R=rlSetup(v,{n:r.wn});R.on=true;rlShift(R.bolt,0,0,r.kick*.05)}
+    /* the reload pose is made for the first-person camera: smaller here so the gun stays in the hands */
+    v.position.multiplyScalar(.35);v.rotation.x*=.6;v.rotation.y*=.6;v.rotation.z*=.6;
+    if(P.ins){const x=v.position.x,y=v.position.y,z=v.position.z;insApply(dt,v,1);v.position.set(x+(v.position.x-x)*.6,y+(v.position.y-y)*.6,z+(v.position.z-z)*.6)}
+    if(r.knife&&v.userData.kv)knAnim(v)}
+  catch(e){if(!mpGunAnim.err){mpGunAnim.err=1;console.warn('remote anim',e)}}
+  finally{Object.assign(P,keep);WK.dr=dr}}
 function human(tm,wpn,vr){
   const g=new THREE.Group(),t=tm==='T',ms=[];g.rotation.order='YXZ';vr=Math.abs((vr==null?0:vr)|0)%6;
   const V=(t?H_TV:H_CV)[vr],PL=(t?H_PT:H_PC)[V.pl%(t?H_PT.length:H_PC.length)],TX=hTex(),camo=t?TX.T:TX.C,KEY=tm+vr;
@@ -2340,7 +2364,7 @@ function human(tm,wpn,vr){
     return L},true,TX.P);
   /* ---------- arms: IK-baked so the support hand really reaches the fore-grip ---------- */
   const gx=-.26,pistol=!!wpn&&(wpn.type==='pistol'||!!wpn.knife),gname=wpn&&(GMT[wpn.n]||wpn.knife)?wpn.n:(t?'AK-47':'M4A1'),R1=[1.35,0,0],R0=[1.15,0,0],lt=hRot([gx,pistol?-.62:-.72,pistol?.03:.05],R1);
-  const skg=wpn&&wpn.sk?mpSkinGun(wpn):null;
+  const skg=mpGunModel(wpn);
   const arms=[-1,1].map(s=>{const rot=s>0?R1:R0,p=new THREE.Group();p.position.set(s*.34,1.55,0);p.rotation.set(rot[0],rot[1],rot[2]);g.add(p);
     const Th=s>0?[gx,-.6,0]:hRot([lt[0]+.68,lt[1],lt[2]],rot,true),dl=Math.hypot(...Th),Wr=Th.map(v=>v-v/dl*.06),pole=hRot([-s*.45,-1,.55],rot,true),{E,W}=hIK(Wr,.38,.36,pole),Hd=Th.map((v,k)=>W[k]+(v-W[k])*Math.min(1,.07/(Math.hypot(Th[0]-W[0],Th[1]-W[1],Th[2]-W[2])||1))),fd=[Hd[0]-W[0],Hd[1]-W[1],Hd[2]-W[2]];
     grp(p,'arm'+KEY+s+gname+(pistol?'p':'r')+(skg&&s>0?'x':''),()=>{const{L,a,p:P}=mk(),dir=orient(fd),off=pole.map(v=>v*.05),sl=sh;
@@ -2354,9 +2378,9 @@ function human(tm,wpn,vr){
       if(s>0&&!skg){let gp;try{gp=wpn&&(GMT[wpn.n]||wpn.knife)?botGunParts(wpn):botGunParts({n:gname})}catch(e){gp=[]}gp.forEach(q=>P([q[0],q[1],[q[2][0]+gx,q[2][1],q[2][2]],q[3],H]))}
       return L},false,camo);
     /* skinned weapon: first-person frame (muzzle -z, up +y) -> arm frame (forward -y, up -z), same place as the plain one */
-    if(s>0&&skg){skg.rotation.x=-Math.PI/2;skg.position.set(gx,-.7,0);p.add(skg);skg.traverse(o=>{if(o.isMesh){o.castShadow=true;o.userData.hs=false;o.userData.own=1;ms.push(o)}})}
+    if(s>0&&skg){const hold=new THREE.Group();hold.rotation.x=-Math.PI/2;hold.position.set(gx,-.7,0);hold.add(skg);p.add(hold);skg.traverse(o=>{if(o.isMesh){o.castShadow=true;o.userData.hs=false;o.userData.own=1;ms.push(o)}})}
     return p});
-  return{g,ms,legs,arms}}
+  return{g,ms,legs,arms,gm:skg}}
 /* hit boxes: slightly generous, one per body part. hg = damage multiplier (CS2: head x4, chest/arms x1, stomach x1.25, legs x.75) */
 const HB_MAT=new THREE.MeshBasicMaterial({side:THREE.DoubleSide});
 const HB_DEF=[['head',.36,.4,.36,0,1.8,0,4,1],['chest',.64,.52,.42,0,1.42,0,1,0],['belly',.54,.24,.36,0,1.07,0,1.25,0],
@@ -2951,7 +2975,7 @@ function sInspect(k){if(!A())return;const T=(ms,f)=>insTm.push(setTimeout(()=>{i
   const rus=t=>nz(out('w',{v:.35}),t,.22,{f:2200,fe:900,q:.8,v:.12,a:.05}),tk=(t,f)=>{const d=out('w',{v:.5});tn(d,t,.025,{ty:'square',f:f,fe:f*.55,v:.1});nz(d,t,.02,{ty:'highpass',f:3500,v:.12})};
   T(30,rus);T(1000,t=>{rus(t);tk(t,k==='knife'?2600:1500)});T(2300,t=>{rus(t);tk(t+.04,1100)});
   if(k==='bfl'){[1800,2900,3500,5750,6100].forEach(ms=>T(ms,t=>tk(t,2400)));[400,1300,1900,2500,3700,5000,5600].forEach(ms=>T(ms,rus))}else if(k==='kar'){[300,950,1900,2300,2700,4600,5000,5400].forEach(ms=>T(ms,rus));T(6300,t=>{rus(t);tk(t+.1,2000)})}else if(k==='bay'){[600,1700,3000,3900].forEach(ms=>T(ms,rus));T(4300,t=>tk(t,1800))}else if(k==='stl'){[1000,2300,3500,4500].forEach(ms=>T(ms,t=>{rus(t);tk(t+.05,2400)}))}else if(k==='jkm'){[650,1550,2400,2700,3000,3300,5150].forEach(ms=>T(ms,rus));T(3900,t=>{rus(t);tk(t,1900)});T(4700,t=>{rus(t);tk(t+.02,2600);tk(t+.11,1700)});T(5700,t=>tk(t,1500))}else if(k==='knife')T(1950,t=>tk(t,2200));else T(3150,t=>tk(t,1300));T(3800,rus)}
-function startInspect(){const w=WP[cur];if(!w||GRC.sel||!started||!active()||!P.alive||P.scoped||P.reload>0)return;insStop();P.ins={t:0,k:insKind(w)};sInspect(P.ins.k)}
+function startInspect(){const w=WP[cur];if(!w||GRC.sel||!started||!active()||!P.alive||P.scoped||P.reload>0)return;insStop();P.ins={t:0,k:insKind(w)};sInspect(P.ins.k);if(MP.on){MP.iq=(MP.iq|0)+1;mpSend(true)}}
 function insApply(dt,v,sg){const I=P.ins;if(!P.alive||P.reload>0){insStop();return}
   const D=INS_K[I.k];if(!D){insStop();return}I.t+=dt;if(I.t>=D.d){insStop();return}
   const K=D.k;let i=0;while(i<K.length-2&&I.t>K[i+1][0])i++;
@@ -4072,7 +4096,7 @@ function mpBegin(){MP.on=true;roundOver=false;matchOver=false;buyActive=false;wa
   if(mpGun()){SC.T=SC.CT=0;GGK=0;GGDS=0;ggEquip();WP.forEach(w=>w&&fullAmmo(w))}if(mpBomb())mpBombReset();
   MP.pend={al:1,hp:100,pl:1,k:0,d:0,gs:0,bf:0,bw:null};mpSend(true);upd()}
 function mpSend(){const r=MP.room;if(!r)return;const w=WP[cur]||{};
-  const p={id:myId(),n:myName(),tg:pfTag(),vf:vfOn()?1:0,t:team,pl:MP.on&&started?1:0,x:+P.x.toFixed(2),z:+P.z.toFixed(2),y:+(P.y-1.7).toFixed(2),yw:+P.yaw.toFixed(3),pt:+P.pitch.toFixed(2),hp:Math.max(0,Math.round(P.hp)),al:P.alive?1:0,cr:P.crouch?1:0,wt:w.type||'rifle',wk:w.kind||'',wn:w.melee?'Knife':(w.n||''),sk:mpSkin(w),rl:P.reload>0?1:0,f:MP.fseq,k:S_.k,d:S_.d,ht:MP.hs,cfg:MP.cfg,rs:MP.rs,rn:MP.rn};
+  const p={id:myId(),n:myName(),tg:pfTag(),vf:vfOn()?1:0,t:team,pl:MP.on&&started?1:0,x:+P.x.toFixed(2),z:+P.z.toFixed(2),y:+(P.y-1.7).toFixed(2),yw:+P.yaw.toFixed(3),pt:+P.pitch.toFixed(2),hp:Math.max(0,Math.round(P.hp)),al:P.alive?1:0,cr:P.crouch?1:0,wt:w.type||'rifle',wk:w.kind||'',wn:w.melee?'Knife':(w.n||''),sk:mpSkin(w),rl:P.reload>0?1:0,rd:P.reload>0&&P.rw?[P.rw.rt,P.rw.a,P.rw.mag,P.rw.res]:null,ik:P.ins?P.ins.k:'',iq:MP.iq|0,f:MP.fseq,k:S_.k,d:S_.d,ht:MP.hs,cfg:MP.cfg,rs:MP.rs,rn:MP.rn};
   if(MP.dn)p.dn=MP.dn;if(MP.pend){Object.assign(p,MP.pend);MP.pend=null}r.presence(p).catch(()=>{})}
 
 /* ===== multiplayer: Bomb defusal / Gun Game helpers ===== */
@@ -4139,21 +4163,21 @@ function mpShot(r,d,hs,jump,w){if(BH||!r.al||r.t===team)return;MP.hseq++;MP.hs.p
 function mpTag(r){const c=document.createElement('canvas');c.width=256;c.height=64;const g=c.getContext('2d');g.font='bold 34px Rajdhani,Arial,sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineWidth=6;g.strokeStyle='rgba(0,0,0,.85)';g.fillStyle=r.t==='CT'?'#8fbaff':'#ffc27a';const nm=pfName(r.n,r.tg)+(r.vf?' \u2714':'');g.strokeText(nm,128,34,248);g.fillText(nm,128,34,248);
   const tx=new THREE.CanvasTexture(c);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,depthTest:false,transparent:true}));sp.scale.set(1.6,.4,1);sp.position.y=2.4;sp.renderOrder=9;sp.visible=r.t===team;if(r.tag){r.g.remove(r.tag);r.tag.material.map.dispose();r.tag.material.dispose()}r.tag=sp;r.tn=nm;r.g.add(sp)}
 function mpSkin(w){try{const eq=CFG.eq||{};if(!w)return '';return String(w.melee?(eq.k||''):(eq[w.n==='AK-47'?'w':'w:'+w.n]||'')).slice(0,40)}catch(e){return ''}}
-function mpWdef(n,sk){n=String(n||'');if(n==='Knife')return{n:'Knife',type:'knife',knife:1,sk};try{const d=defOf(n);return d?Object.assign({},d,{sk}):null}catch(e){return null}}
+function mpWdef(n,sk){n=String(n||'');if(n==='Knife')return{n:'Knife',type:'knife',knife:1,sk,mp:1};try{const d=defOf(n);return d?Object.assign({},d,{sk,mp:1}):null}catch(e){return null}}
 const mpSkId=s=>String(s.sk||'').slice(0,40);
 function mpFree(ms){ms.forEach(m=>{try{m.material.dispose();if(m.userData.own)m.geometry.dispose()}catch(e){}})}
 /* swap the weapon the remote player holds: rebuild the model (geometry is cached, so it is cheap) and play the draw animation */
 function mpHold(r,s){const old=r.g,h=human(r.t,mpWdef(s.wn,mpSkId(s)),r.vr);h.g.position.copy(old.position);h.g.rotation.copy(old.rotation);h.g.scale.copy(old.scale);
   scene.remove(old);if(r.tag){old.remove(r.tag);h.g.add(r.tag)}mpFree(r.ms);
-  r.g=h.g;r.ms=h.ms;r.legs=h.legs;r.arms=h.arms;h.ms.forEach(m=>{m.userData.rp=r});scene.add(h.g);r.knife=s.wn==='Knife';r.dw=r.wn===undefined?0:1;r.wn=s.wn;r.hsk=mpSkId(s);mpMeshes()}
+  r.g=h.g;r.ms=h.ms;r.legs=h.legs;r.arms=h.arms;r.gm=h.gm;if(r.wn!==s.wn){r.drT=0;r.ins=null}h.ms.forEach(m=>{m.userData.rp=r});scene.add(h.g);r.knife=s.wn==='Knife';r.dw=r.wn===undefined?0:1;r.wn=s.wn;r.hsk=mpSkId(s);mpMeshes()}
 /* arm animation of remote players: aim pitch, recoil, knife slash, reload, weapon draw, breathing */
 function mpAnim(r,dt,t){const A=r.arms;if(!A||!r.al)return;r.kick=Math.max(0,(r.kick||0)-dt*(r.knife?5:8));r.dw=Math.max(0,(r.dw||0)-dt*2.4);
   r.rlT=r.rl?(r.rlT||0)+dt:0;const aim=Math.max(-.55,Math.min(.75,r.tpt||0))*.9,br=Math.sin(t*1.7+(r.vr||0)*1.3)*.012;let l=1.15,rr=1.35;
   if(r.knife){if(r.kick>0)rr+=Math.sin((1-r.kick)*Math.PI)*1.15}else{l+=r.kick*.1;rr+=r.kick*.14}
   if(r.rl&&!r.knife){const q=Math.min(1,r.rlT/.25);rr-=.4*q;l-=.55*q+.2*Math.sin(r.rlT*9)}
-  l-=r.dw*.9;rr-=r.dw*1.0;A[0].rotation.x=l+aim;A[1].rotation.x=rr+aim+br}
+  l-=r.dw*.9;rr-=r.dw*1.0;A[0].rotation.x=l+aim;A[1].rotation.x=rr+aim+br;mpGunAnim(r,dt)}
 function mpCreate(peer,s){const t_=s.t==='CT'?'CT':'T',vr=Array.from(String(peer)).reduce((q,c)=>(q*31+c.charCodeAt(0))|0,7),h=human(t_,mpWdef(s.wn,mpSkId(s)),vr);h.g.position.set(+s.x||0,+s.y||0,+s.z||0);scene.add(h.g);
-  const r={peer,t:t_,g:h.g,ms:h.ms,legs:h.legs,al:true,n:'?',id:'',tx:+s.x||0,tz:+s.z||0,ty:+s.y||0,tyw:0,cr:0,k:0,d:0,vr,arms:h.arms,wn:s.wn,hsk:mpSkId(s),knife:s.wn==='Knife',kick:0,dw:0,rl:0};h.ms.forEach(m=>{m.userData.rp=r});return r}
+  const r={peer,t:t_,g:h.g,ms:h.ms,legs:h.legs,al:true,n:'?',id:'',tx:+s.x||0,tz:+s.z||0,ty:+s.y||0,tyw:0,cr:0,k:0,d:0,vr,arms:h.arms,gm:h.gm,drT:9,ins:null,wn:s.wn,hsk:mpSkId(s),knife:s.wn==='Knife',kick:0,dw:0,rl:0};h.ms.forEach(m=>{m.userData.rp=r});return r}
 function mpRemove(k){const r=MP.rp[k];if(!r)return;scene.remove(r.g);delete MP.rp[k];delete MP.seen[k];mpMeshes()}
 function mpMeshes(){MP.ms=[];for(const r of Object.values(MP.rp))if(r.al)MP.ms.push(...r.ms)}
 function mpSync(peers){const live={};try{window.mxPeers&&mxPeers(peers)}catch(e){}
@@ -4162,7 +4186,7 @@ function mpSync(peers){const live={};try{window.mxPeers&&mxPeers(peers)}catch(e)
   for(const p of peers){if(p.isMe)continue;const s=p.presence;if(!s||s.id==null||!s.pl)continue;live[p.peer]=1;
     let r=MP.rp[p.peer];if(r&&r.t!==(s.t==='CT'?'CT':'T')){mpRemove(p.peer);r=null}
     if(!r){r=MP.rp[p.peer]=mpCreate(p.peer,s);const ht=Array.isArray(s.ht)?s.ht:[];MP.seen[p.peer]={h:ht.reduce((a,e)=>Math.max(a,e.i|0),0),d:s.dn?s.dn.i|0:0};r.f=s.f|0}
-    if(s.wn!==r.wn||mpSkId(s)!==r.hsk)mpHold(r,s);r.rl=s.rl?1:0;r.sk=mpSkId(s);
+    if(s.wn!==r.wn||mpSkId(s)!==r.hsk)mpHold(r,s);r.rl=s.rl?1:0;r.rd=Array.isArray(s.rd)?s.rd:null;r.sk=mpSkId(s);if((s.iq|0)!==r.iq){r.iq=s.iq|0;r.ins=s.ik&&Object.prototype.hasOwnProperty.call(INS_K,s.ik)?{t:0,k:String(s.ik)}:null}else if(!s.ik)r.ins=null;
     r.gs=s.gs|0;r.bw=s.bw||null;if(s.bf>0&&s.bf!==r.bf0){r.bf0=s.bf;try{bhToast(String(s.n||'?').slice(0,14)+' \u{1F3C1} '+bhFmt(s.bf))}catch(e){}}else if(!s.bf)r.bf0=0;
     if(MP.on&&mpBomb()&&MP.rn===MP.rs.n){if(s.bb&&s.bb.n===MP.rs.n&&BOMB.s==='carried')plantBomb(+s.bb.x||0,+s.bb.z||0);if(s.bd===MP.rs.n&&BOMB.s==='planted')bombDefused()}
     r.n=String(s.n||'?').slice(0,16);r.tg=pfClean(s.tg);r.vf=s.vf===1?1:0;r.id=String(s.id);r.tx=+s.x||0;r.tz=+s.z||0;r.ty=+s.y||0;r.tyw=+s.yw||0;r.tpt=+s.pt||0;r.hp=s.hp|0;r.cr=s.cr?1:0;r.wt=s.wt;r.wk=s.wk;r.k=s.k|0;r.d=s.d|0;r.rn=s.rn|0;r.rs=s.rs?{n:s.rs.n|0,T:s.rs.T|0,CT:s.rs.CT|0}:null;

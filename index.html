@@ -2656,7 +2656,7 @@ const d2Depot=()=>!MP.on&&(CFG.gm==='duel2'&&CFG.d2map!=='arena'||CFG.gm==='duel
 const BHP=[],BHM=[],BHMV=[],BHS={cp:0,n:0,t:0,run:false,falls:0,done:false,nb:false,x0:0,z0:0};let bhJb=0;
 (function(){
  const th=1,hue=[.58,.5,.42,.33,.75,.9,.08,.14,.62];let zf=5,px=0,py=0,sec=0,c=0;
- function add(w,d,gap,dx,dy,o){o=o||{};const z=zf-gap-d/2;px+=dx;py+=dy;BHP.push({x:px,z:z,w:w,d:d,y:py,th:th,cp:o.cp,fin:o.fin,pad:o.pad,mv:o.mv,h:hue[sec%hue.length]});zf=z-d/2}
+ function add(w,d,gap,dx,dy,o){o=o||{};gap=Math.min(gap,4.4);const z=zf-gap-d/2;px+=dx;py+=dy;BHP.push({x:px,z:z,w:w,d:d,y:py,th:th,cp:o.cp,fin:o.fin,pad:o.pad,mv:o.mv,h:hue[sec%hue.length]});zf=z-d/2}
  add(10,10,0,0,0,{cp:c++});
  sec=0;[2.2,2.6,3,3.2,3.4,3.4].forEach((g,i)=>add(4,4,g,i?(i%2?1.6:-1.6):-.8,0));
  sec=1;add(8,8,2.4,-px,0,{cp:c++});
@@ -2665,7 +2665,7 @@ const BHP=[],BHM=[],BHMV=[],BHS={cp:0,n:0,t:0,run:false,falls:0,done:false,nb:fa
  sec=3;for(let i=0;i<5;i++)add(4,4,2,i?(i%2?2.5:-2.5):0,.8);
  sec=4;for(let i=0;i<6;i++)add(3.2,3.2,1.6,i?(i%2?5.6:-5.6):-px+2.8,0);
  sec=1;add(8,8,2.4,-px,0,{cp:c++});
- sec=5;add(5,30,2.4,0,0);add(6,10,5.8,0,0,{cp:c++});
+ sec=5;add(5,30,2.4,0,0);sec=3;for(let i=0;i<4;i++)add(4,4,2.8,i?(i%2?2.6:-2.6):0,i%2?.6:0);add(6,10,3,-px,0,{cp:c++});
  sec=6;for(let i=0;i<4;i++)add(5,5,5.6,i?(i%2?5:-5):-px+2.5,0);
  sec=1;add(8,8,5.6,-px,0,{cp:c++});
  sec=7;add(3.4,3.4,2.4,0,0,{pad:15.5});

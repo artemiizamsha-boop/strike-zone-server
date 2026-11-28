@@ -3659,10 +3659,16 @@ const MDSEEN={};let mdIrT=0;
 function mdSnapshot(s){const a=curAccRaw(),own=[],st=[],k={};
   SHOP.items.forEach((x,i)=>{if(x.box){const n=mdInt((CFG.cases||{})[x.id]);if(n)k[x.id]=n}else if(CFG.own&&CFG.own[x.id]){own.push(i.toString(36));if(CFG.stt&&CFG.stt[x.id]!=null)st.push(i.toString(36))}});
   return{s,c:CFG.coins||0,e:CFG.elo|0,l:lvOf(STS().xp).lv,vf:vfOn()?1:0,b:ACC.ban||(a&&a.ban)?1:0,n:myName(),o:own.join(','),st:st.join(','),k}}
-function mdTick(){const me=PID(),a=curAccRaw();
-  if(me&&a)for(const p of MP.lob){const pr=p.presence||{};
+/* guests (no account) have a saved temporary ID, so they can be viewed and moderated too */
+function mdGuest(){const g=ACC.gmod||(ACC.gmod={gg:[]});g.id=myId();Object.defineProperty(g,'st',{configurable:true,enumerable:false,get:STS,set(){}});return g}
+function mdTick(){const me=myId(),acc=curAccRaw(),a=acc||mdGuest();
+  if(!acc){let ch=false;for(const p of MP.lob){const gr=p.presence&&p.presence.gr;if(!Array.isArray(gr))continue;
+      for(const g of gr){if(!g||g.to!==me||typeof g.s!=='string'||g.s.length>24||a.gg.indexOf(g.s)>=0)continue;a.gg.push(g.s);ch=true;
+        if(g.vf!=null)ACC.gvf=g.vf?1:0;const c=mdInt(g.c);if(c){CFG.coins=(CFG.coins||0)+c;save()}accSave();grNote(g)}}
+    if(ch)grRefresh();if(a.gg.length&&MP.api)MP.api.presence({ga:a.gg.slice(-20)}).catch(()=>{})}
+  for(const p of MP.lob){const pr=p.presence||{};
     if(Array.isArray(pr.gx))for(const g of pr.gx){if(!g||g.to!==me||typeof g.s!=='string'||g.s.length>24)continue;
-      if(mdApply(a,g,true,true)){try{if(MP.api)MP.api.presence({ga:gaPub()}).catch(()=>{})}catch(e){}mdAfter(g)}}
+      if(mdApply(a,g,true,true)){try{if(MP.api)MP.api.presence({ga:acc?gaPub():a.gg.slice(-20)}).catch(()=>{})}catch(e){}mdAfter(g)}}
     const q=pr.iq;if(q&&q.to===me&&typeof q.s==='string'&&!MDSEEN[q.s]&&MP.api){MDSEEN[q.s]=1;MP.api.presence({ir:mdSnapshot(q.s)}).catch(()=>{});clearTimeout(mdIrT);mdIrT=setTimeout(()=>{try{MP.api.presence({ir:null}).catch(()=>{})}catch(e){}},15000)}}
   mdAnswer()}
 /* ----- admin side ----- */
@@ -4139,7 +4145,7 @@ ru:{mpx_nh:'Создать комнату',mpx_ns:'Вы становитесь �
 en:{mpx_nh:'Create a room',mpx_ns:'You become the host: pick a mode and a map, then invite friends with the code.',mpx_jh:'Join by code',mpx_js:'Enter the room code your friend sent you.'}};
 for(const l in X)if(TX[l])Object.assign(TX[l],X[l])}
 const escH=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const myId=()=>PID()||MP.gid||(MP.gid=genId());
+const myId=()=>PID()||MP.gid||(MP.gid=idOk(ACC.gid)?ACC.gid:(ACC.gid=genId(),accSave(),ACC.gid));
 const myName=()=>{const a=curAccRaw();return a?a.n:t('acc_guest')};
 const FR=()=>{const a=curAccRaw();return a?(a.fr||(a.fr=[])):(CFG.fr||(CFG.fr=[]))};
 const frSave=()=>{if(curAccRaw())accSave();else save()};

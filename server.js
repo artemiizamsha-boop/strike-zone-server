@@ -1,6 +1,6 @@
 'use strict';
 /*
-  Strike Zone — game server
+  FragX — game server
   1) serves index.html (the game) over HTTP
   2) WebSocket relay on the same address (the game connects to wss://<your-host>)
 
@@ -55,10 +55,10 @@ function flush() {
 setInterval(flush, 5000).unref();
 
 /* ---------------- static files ---------------- */
-const STATIC = new Set(['index.html', 'sw.js', 'manifest.json', 'manifest.webmanifest', 'favicon.ico']);
+const STATIC = new Set(['index.html', 'sw.js', 'manifest.json', 'manifest.webmanifest', 'favicon.ico', 'icon-192.png', 'icon-512.png']);
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8',
-  '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon'
+  '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon', '.png': 'image/png'
 };
 const fileCache = new Map();   // name -> {etag, raw, gz}
 
@@ -323,7 +323,7 @@ setInterval(() => {
   }
 }, 25000).unref();
 
-server.listen(PORT, () => console.log('Strike Zone server on port ' + PORT));
+server.listen(PORT, () => console.log('FragX server on port ' + PORT));
 
 for (const sig of ['SIGTERM', 'SIGINT']) {
   process.on(sig, () => { flush(); process.exit(0); });

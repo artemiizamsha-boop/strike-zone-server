@@ -1231,7 +1231,7 @@ addEventListener('keydown',e=>{if(e.code==='Escape'&&$('inm').classList.contains
 /* ===== CASE «NEXOR» + weapon skins (AK-47) =====
    Case = SHOP item with  box:[skinIds]  (consumable: pays coins, rolls a skin, the skin goes to CFG.own).
    Skins are hidden shop items (hid:1) of category 'w' — they only live in the inventory; equip = CFG.eq.w = id. */
-const NEX_P=150,NEX_REF=.5;
+const NEX_P=500,NEX_REF=.5;
 const NEX_L=['uk','ru','en','pt','zh','ja','es'];
 const NEXTX={
 uk:{sh_c_w:'Скіни',nx_open:'Відкрити',nx_h:'Вміст кейса',nx_go:'Відкрити кейс',nx_again:'Ще раз',nx_ok:'Готово',nx_dup:'Дублікат! Повернено {n} койнів',nx_new:'Новий скін у інвентарі!',nx_rare:'Рідкісний',nx_roll:'Відкриття…',nx_d:'6 скінів для AK-47 · усі рідкісні',nx_sk:'Скін для',nx_pay:'Ціна'},
@@ -1901,7 +1901,7 @@ function wskPv(it){const P=wskParts(it.wp),cv=document.createElement('canvas');c
 {const L7=(a,b,c,d,e,f,g)=>({uk:a,ru:b,en:c,pt:d,zh:e,ja:f,es:g}),cth=(a,b,k)=>NEX_CASE.th().split('#6f8cff').join(a).split('#c14dff').join(b).split('nxg').join('nxg_'+k);
  const CT=L7('Вміст кейса','Содержимое кейса','Case contents','Conteúdo da caixa','箱内物品','ケースの中身','Contenido del cajón');void CT;
  SHOP.items.push(
-  {id:'case_blade',cat:'c',p:1000,cls:'lg',n:L7('Wamp','Wamp','Wamp','Wamp','Wamp','Wamp','Wamp'),d:L7('6 скінів на ножі · Епічні, Легендарні, Аркана','6 скинов на ножи · Эпические, Легендарные, Аркана','6 knife skins · Epic, Legendary, Arcana','6 skins de faca · Épico, Lendário, Arcana','6 款刀具皮肤 · 史诗、传说、至臻','ナイフスキン6種 · エピック〜アルカナ','6 aspectos de cuchillo · Épico, Legendario, Arcana'),
+  {id:'case_blade',cat:'c',p:10000,cls:'lg',n:L7('Wamp','Wamp','Wamp','Wamp','Wamp','Wamp','Wamp'),d:L7('6 скінів на ножі · Епічні, Легендарні, Аркана','6 скинов на ножи · Эпические, Легендарные, Аркана','6 knife skins · Epic, Legendary, Arcana','6 skins de faca · Épico, Lendário, Arcana','6 款刀具皮肤 · 史诗、传说、至臻','ナイフスキン6種 · エピック〜アルカナ','6 aspectos de cuchillo · Épico, Legendario, Arcana'),
    box:['kn_bfly_s1','kn_bfly_s2','kn_bfly_s3','kn_kar_s1','kn_kar_s2','kn_kar_s3'],th:()=>cth('#ff8a3a','#d4328c','blade').split('NEXOR').join('WAMP')},
   ...WSK_ITEMS)}
 /* the AWP + Desert Eagle skins now drop from the same case as the AK-47 skins */
@@ -2076,7 +2076,7 @@ try{loreTex()}catch(e){}
   d:{uk:'Ніж · '+SEC.uk,ru:'Нож · '+SEC.ru,en:'Knife · '+SEC.en,pt:'Faca · '+SEC.pt,zh:'刀具 · '+SEC.zh,ja:'ナイフ · '+SEC.ja,es:'Cuchillo · '+SEC.es},pv:JKM_PV,
   th:x=>jkIm(x),view:(o,x)=>{const im=jkIm(x);o.innerHTML='<div class="ivf ivs se f">'+im+'</div><div class="ivf ivs se k">'+im+'</div>'}});
  const L7=(a,b,c,d,e,f,g)=>({uk:a,ru:b,en:c,pt:d,zh:e,ja:f,es:g});
- SHOP.items.push({id:'case_unknow',cat:'c',p:5000,cls:'se',n:Object.fromEntries(NEX_L.map(l=>[l,'Unknow Case'])),
+ SHOP.items.push({id:'case_unknow',cat:'c',p:50000,cls:'se',n:Object.fromEntries(NEX_L.map(l=>[l,'Unknow Case'])),
   d:L7('Лише СЕКРЕТНЕ: AWP | Dragon Lore та ніж Джикомандо','Только СЕКРЕТНОЕ: AWP | Dragon Lore и нож Джикомандо','Secret only: AWP | Dragon Lore and the Jikomando knife','Só SECRETO: AWP | Dragon Lore e a faca Jikomando','仅限绝密：AWP | Dragon Lore 与 Jikomando 刀','シークレットのみ：AWP | Dragon Lore と Jikomando ナイフ','Solo SECRETO: AWP | Dragon Lore y el cuchillo Jikomando'),
   w:{se:1},
   box:['sk_awp_lore','kn_jkm'],
@@ -5697,7 +5697,7 @@ const TG_URL='https://t.me/fragxshanellofficial';
  const ST=D.map(([id,k,cls,n])=>{let uri=null;return{id,cat:'n',p:0,hid:1,cls,n,d:Object.fromEntries(NEX_L.map(l=>[l,TX[l].sh_c_n+' · '+TX[l][NEX_R[cls].n]])),
    get pv(){return uri||(uri=svgUri(SV[k]))},th:()=>SV[k],
    view:(o,x)=>{const im='<img alt="" draggable="false" src="'+x.pv+'">';o.innerHTML='<div class="ivf ivs '+x.cls+' f">'+im+'</div><div class="ivf ivs '+x.cls+' k">'+im+'</div>'}}});
- const BOX={id:'case_stickers',cat:'c',p:110,cls:'rr',n:L7('Vortex','Vortex','Vortex','Vortex','Vortex','Vortex','Vortex'),
+ const BOX={id:'case_stickers',cat:'c',p:450,cls:'rr',n:L7('Vortex','Vortex','Vortex','Vortex','Vortex','Vortex','Vortex'),
   d:L7('5 наліпок · від рідкісних до Аркани','5 наклеек · от редких до Аркана','5 stickers · from Rare to Arcana','5 adesivos · de Raro a Arcana','5 张贴纸 · 从稀有到秘宝','5種のステッカー · レアからアルカナまで','5 pegatinas · de Rara a Arcana'),
   box:ST.map(x=>x.id),
   th:()=>'<svg viewBox="0 0 140 100" aria-hidden="true"><defs><linearGradient id="stg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb23a"/><stop offset="1" stop-color="#ff3d8a"/></linearGradient></defs><ellipse cx="70" cy="92" rx="54" ry="6" fill="#000" opacity=".5"/><rect x="18" y="32" width="104" height="56" rx="4" fill="#2a2330" stroke="#5b4a66" stroke-width="2"/><rect x="13" y="20" width="114" height="18" rx="3" fill="#392f43" stroke="#6b587a" stroke-width="2"/><rect x="18" y="45" width="104" height="3" fill="url(#stg)"/><rect x="18" y="80" width="104" height="3" fill="url(#stg)"/><rect x="60" y="33" width="20" height="12" rx="2" fill="#15101a" stroke="url(#stg)" stroke-width="2"/><circle cx="30" cy="55" r="7" fill="#fff"/><circle cx="30" cy="55" r="5" fill="#ff4d3a"/><path d="M104 54l8 5-3 9-9 1-3-8z" fill="#fff"/><path d="M105.5 57l5 3-2 6-6 .5-2-5z" fill="#4aa3ff"/><text x="70" y="74" text-anchor="middle" font-family="Rajdhani,Arial,sans-serif" font-weight="700" font-size="14" letter-spacing="2" fill="url(#stg)">VORTEX</text></svg>'};
@@ -5722,7 +5722,7 @@ const GF_CD=5,GF_DIST=5,GF_SIZE=1.5,GF_TEX={};let gfMesh=null,gfLast=-1e9;
   ['gf_boom','boom','ar',L7('Бабах','Бабах','Boom','Bum','轰','ドカン','Bum')]
  ].map(([id,k,cls,n])=>{const uri=svgUri(SV[k]);return{id,cat:'g',p:0,hid:1,cls,n,pv:uri,d:Object.fromEntries(NEX_L.map(l=>[l,TX[l].gf_d+' · '+TX[l][NEX_R[cls].n]])),th:()=>SV[k],
    view:(o,x)=>{const im='<img alt="" draggable="false" src="'+x.pv+'">';o.innerHTML='<div class="ivf ivs '+x.cls+' f">'+im+'</div><div class="ivf ivs '+x.cls+' k">'+im+'</div>'}}});
- const BOX={id:'case_graffiti',cat:'c',p:125,cls:'rr',n:L7('Splash','Splash','Splash','Splash','Splash','Splash','Splash'),
+ const BOX={id:'case_graffiti',cat:'c',p:600,cls:'rr',n:L7('Splash','Splash','Splash','Splash','Splash','Splash','Splash'),
   d:L7('5 графіті · від рідкісних до Аркани','5 граффити · от редких до Аркана','5 sprays · from Rare to Arcana','5 grafites · de Raro a Arcana','5 款涂鸦 · 从稀有到秘宝','5種のグラフィティ · レアからアルカナまで','5 grafitis · de Rara a Arcana'),
   box:ST.map(x=>x.id),
   th:()=>'<svg viewBox="0 0 140 100" aria-hidden="true"><ellipse cx="70" cy="92" rx="54" ry="6" fill="#000" opacity=".5"/><rect x="18" y="32" width="104" height="56" rx="4" fill="#2b2430" stroke="#6a4f6e" stroke-width="2"/><rect x="13" y="20" width="114" height="18" rx="3" fill="#3a3040" stroke="#7d5f82" stroke-width="2"/><rect x="18" y="45" width="104" height="3" fill="#7dff5a"/><rect x="18" y="80" width="104" height="3" fill="#7dff5a"/><circle cx="26" cy="55" r="4" fill="#ff3fa4"/><circle cx="32" cy="50" r="2" fill="#ff3fa4"/><circle cx="114" cy="74" r="3.5" fill="#7dff5a"/><text x="70" y="70" text-anchor="middle" font-family="Rajdhani,Arial,sans-serif" font-weight="700" font-size="19" letter-spacing="3" fill="#7dff5a">SPLASH</text></svg>'};
@@ -5904,7 +5904,7 @@ function glvPv(it){const cv=document.createElement('canvas');cv.width=560;cv.hei
  const CT={uk:'Рукавички',ru:'Перчатки',en:'Gloves',pt:'Luvas',zh:'手套',ja:'グローブ',es:'Guantes'};for(const l in CT)TX[l].sh_c_gl=CT[l];
  if(!SHOP.cats.includes('gl'))SHOP.cats.splice(Math.max(1,SHOP.cats.indexOf('w')),0,'gl');
  const svg='<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gcg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3a"/><stop offset="1" stop-color="#d4328c"/></linearGradient></defs><rect x="14" y="30" width="92" height="50" rx="5" fill="#1a1c22" stroke="#e8b84a" stroke-width="2"/><rect x="14" y="30" width="92" height="12" rx="3" fill="#2a2d36"/><path d="M38 68V44q0-5 5-5t5 5v-4q0-5 5-5t5 5v-3q0-5 5-5t5 5v4q0-5 5-5t5 5v22q0 10-10 12H48q-10-2-10-12z" fill="url(#gcg)" stroke="#000" stroke-opacity=".6" stroke-width="1.6"/><rect x="36" y="66" width="48" height="8" rx="2" fill="#e8b84a"/></svg>';
- SHOP.items.push({id:'case_gloves',cat:'c',p:1800,cls:'lg',n:Object.fromEntries(NEX_L.map(l=>[l,'Gloves Case'])),
+ SHOP.items.push({id:'case_gloves',cat:'c',p:15000,cls:'lg',n:Object.fromEntries(NEX_L.map(l=>[l,'Gloves Case'])),
   d:L7(pub.length+' рукавичок · деякі парні з ножами',pub.length+' перчаток · некоторые парные с ножами',pub.length+' gloves · some match knives',pub.length+' luvas · algumas combinam com facas',pub.length+' 副手套 · 部分与刀具成套','グローブ'+pub.length+'種 · ナイフとペアあり',pub.length+' guantes · algunos hacen juego con cuchillos'),
   box:pub.map(o=>o.id),th:()=>svg});
  const uc=SHOP.items.find(i=>i.id==='case_unknow');if(uc){uc.box.push('gl_spectrum','gl_dragonhide');
@@ -5929,7 +5929,7 @@ const KC_TEX={};
   ['kc_gem','gem','ar',L7('Рубін','Рубин','Ruby','Rubi','红宝石','ルビー','Rubí')]
  ].map(([id,k,cls,n])=>{const uri=svgUri(SV[k]);return{id,cat:'h',p:0,hid:1,cls,n,pv:uri,d:Object.fromEntries(NEX_L.map(l=>[l,TX[l].kc_t+' · '+TX[l][NEX_R[cls].n]])),th:()=>SV[k],
    view:(o,x)=>{const im='<img alt="" draggable="false" src="'+x.pv+'">';o.innerHTML='<div class="ivf ivs '+x.cls+' f">'+im+'</div><div class="ivf ivs '+x.cls+' k">'+im+'</div>'}}});
- const BOX={id:'case_keychains',cat:'c',p:150,cls:'rr',n:L7('Mojo','Mojo','Mojo','Mojo','Mojo','Mojo','Mojo'),
+ const BOX={id:'case_keychains',cat:'c',p:550,cls:'rr',n:L7('Mojo','Mojo','Mojo','Mojo','Mojo','Mojo','Mojo'),
   d:L7('5 брелків · від рідкісних до Аркани','5 брелков · от редких до Аркана','5 keychains · from Rare to Arcana','5 chaveiros · de Raro a Arcana','5 个挂件 · 从稀有到秘宝','5種のキーホルダー · レアからアルカナまで','5 llaveros · de Rara a Arcana'),
   box:ST.map(x=>x.id),
   th:()=>'<svg viewBox="0 0 140 100" aria-hidden="true"><ellipse cx="70" cy="92" rx="54" ry="6" fill="#000" opacity=".5"/><rect x="18" y="32" width="104" height="56" rx="4" fill="#1f2d30" stroke="#46666b" stroke-width="2"/><rect x="13" y="20" width="114" height="18" rx="3" fill="#2a3d41" stroke="#567a80" stroke-width="2"/><rect x="18" y="45" width="104" height="3" fill="#35e0c0"/><rect x="18" y="80" width="104" height="3" fill="#35e0c0"/><g transform="translate(-40,10)"><circle cx="70" cy="40" r="7" fill="none" stroke="#e6eaee" stroke-width="3"/><path d="M70 47v7" stroke="#e6eaee" stroke-width="3"/><path d="M70 53l4 7 8 1-6 6 2 8-8-4-8 4 2-8-6-6 8-1z" fill="#ffc42e"/></g><text x="82" y="70" text-anchor="middle" font-family="Rajdhani,Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="3" fill="#35e0c0">MOJO</text></svg>'};
@@ -6097,7 +6097,7 @@ addEventListener('keydown',e=>{if(e.code==='Escape'&&$('stkm').classList.contain
  SHOP.items.push(mk('stk_chebyrek','n','sh_c_n',STK,nm),mk('kc_chebyrek','h','kc_t',KC,nm))}
 /* ===== promo codes (codes are announced in the Telegram channel) =====
    Add a code:  PROMOS[<sha256 of 'sz:'+CODE in lower hex>] = {c:coins}  or  {i:'item id'}  or  {i:['id1','id2']}  — the plain code is never stored in the file. */
-const PROMOS={"2eae696eb37f73dca626fb449f74ac5ee2bef49f7fd565745b5f93c400f543bd":{c:500,k:'case_nexor'},"99699674d948ee124ab6c83048ff2010948dbdd530c3029e67513c2d6dc25a21":{c:500},"2507f3a42c1bf05aa8fa817cab3a526aa0de3d0b0e8d05ef68f3ff12839fdaf1":{c:500},"0667ed8113c6ef466f48fa960ffe760eca55537b6a26815027afa2d1182704f1":{i:['stk_chebyrek','kc_chebyrek']}};
+const PROMOS={"6775b90a6a38727f2ac0ef725f6d812cbef889b12f0a0d69dc447447fda6c051":{c:5000},"2eae696eb37f73dca626fb449f74ac5ee2bef49f7fd565745b5f93c400f543bd":{c:500,k:'case_nexor'},"99699674d948ee124ab6c83048ff2010948dbdd530c3029e67513c2d6dc25a21":{c:500},"2507f3a42c1bf05aa8fa817cab3a526aa0de3d0b0e8d05ef68f3ff12839fdaf1":{c:500},"0667ed8113c6ef466f48fa960ffe760eca55537b6a26815027afa2d1182704f1":{i:['stk_chebyrek','kc_chebyrek']}};
 {const D={uk:{pr_t:'Промокод',pr_h:'Введи промокод із нашого Telegram-каналу',pr_go:'Активувати',pr_get:'Отримати промокод у Telegram',pr_bad:'Невірний промокод',pr_used:'Цей промокод уже активовано',pr_ok:'Готово! +{n} койнів',pr_it:'Отримано: {n}',pr_empty:'Введи промокод'},ru:{pr_t:'Промокод',pr_h:'Введи промокод из нашего Telegram-канала',pr_go:'Активировать',pr_get:'Получить промокод в Telegram',pr_bad:'Неверный промокод',pr_used:'Этот промокод уже активирован',pr_ok:'Готово! +{n} койнов',pr_it:'Получено: {n}',pr_empty:'Введи промокод'},en:{pr_t:'Promo code',pr_h:'Enter a promo code from our Telegram channel',pr_go:'Redeem',pr_get:'Get a promo code on Telegram',pr_bad:'Invalid promo code',pr_used:'This promo code is already used',pr_ok:'Done! +{n} coins',pr_it:'Received: {n}',pr_empty:'Enter a promo code'},pt:{pr_t:'Código promo',pr_h:'Digite um código do nosso canal do Telegram',pr_go:'Resgatar',pr_get:'Obter código no Telegram',pr_bad:'Código inválido',pr_used:'Este código já foi usado',pr_ok:'Pronto! +{n} moedas',pr_it:'Recebido: {n}',pr_empty:'Digite um código'},zh:{pr_t:'兑换码',pr_h:'输入来自我们 Telegram 频道的兑换码',pr_go:'兑换',pr_get:'在 Telegram 获取兑换码',pr_bad:'兑换码无效',pr_used:'该兑换码已使用',pr_ok:'成功！+{n} 金币',pr_it:'已获得：{n}',pr_empty:'请输入兑换码'},ja:{pr_t:'プロモコード',pr_h:'Telegramチャンネルのコードを入力',pr_go:'使用する',pr_get:'Telegramでコードを入手',pr_bad:'無効なコードです',pr_used:'このコードは使用済みです',pr_ok:'完了！ +{n} コイン',pr_it:'獲得：{n}',pr_empty:'コードを入力'},es:{pr_t:'Código promo',pr_h:'Introduce un código de nuestro canal de Telegram',pr_go:'Canjear',pr_get:'Obtener código en Telegram',pr_bad:'Código no válido',pr_used:'Este código ya se usó',pr_ok:'¡Listo! +{n} monedas',pr_it:'Recibido: {n}',pr_empty:'Introduce un código'}};
  for(const l in D)if(TX[l])Object.assign(TX[l],D[l]);
  const paint=()=>{$('prbl').textContent=t('pr_t');$('prt').textContent=t('pr_t');$('prh').textContent=t('pr_h');$('prgo').textContent=t('pr_go');$('prtg').textContent=t('pr_get');$('prtg').href=TG_URL;$('pri').placeholder=t('pr_t').toUpperCase()};
@@ -6259,14 +6259,24 @@ uk:{mk_t:'Ринок',mk_buy:'Купівля',mk_sell:'Продаж',mk_his:'І�
 ru:{mk_t:'Рынок',mk_buy:'Покупка',mk_sell:'Продажа',mk_his:'История',mk_all:'Все',mk_srch:'Поиск скина…',mk_s1:'Редкость ↓',mk_s2:'Цена ↑',mk_s3:'Цена ↓',mk_deal:'Предложения дня',mk_rst:'Обновление через',mk_ok:'Купить',mk_cf:'Подтвердить?',mk_have:'Уже есть',mk_got:'Куплено: ',mk_sold:'Продано: ',mk_st:'StatTrak™ (+30%)',mk_sl:'Продать',mk_eqd:'Надето — снимется',mk_none:'Здесь пусто',mk_fee:'Рынок выкупает за 60% цены',mk_nohis:'Сделок пока нет',mk_b:'Покупка',mk_s:'Продажа',mk_sv:'Продать на рынке'},
 en:{mk_t:'Market',mk_buy:'Buy',mk_sell:'Sell',mk_his:'History',mk_all:'All',mk_srch:'Search skins…',mk_s1:'Rarity ↓',mk_s2:'Price ↑',mk_s3:'Price ↓',mk_deal:'Daily deals',mk_rst:'Refresh in',mk_ok:'Buy',mk_cf:'Confirm?',mk_have:'Owned',mk_got:'Bought: ',mk_sold:'Sold: ',mk_st:'StatTrak™ (+30%)',mk_sl:'Sell',mk_eqd:'Equipped — will be unequipped',mk_none:'Nothing here',mk_fee:'The market buys back at 60% of price',mk_nohis:'No deals yet',mk_b:'Buy',mk_s:'Sell',mk_sv:'Sell on market'}};
 for(const l in TX)Object.assign(TX[l],MX[l]||MX.en);
-const BASE={rr:400,ep:1200,lg:3500,ar:9000,se:25000,sp:25000},RK={sp:6,se:5,ar:4,lg:3,ep:2,rr:1},RC=['rr','ep','lg','ar','se'];
+const SELL={w:{rr:80,ep:240,lg:750,ar:2500,se:30000},k:{rr:1500,ep:3500,lg:9000,ar:25000,se:36000},gl:{rr:300,ep:900,lg:2500,ar:6000,se:30000}},RK={sp:6,se:5,ar:4,lg:3,ep:2,rr:1},RC=['rr','ep','lg','ar','se'];
 let tab='b',rar='all',q='',sort='r',stOn=false,cf='',cft=0,rt=0;
-const can=x=>!!x&&!x.bp&&!!x.hid&&!x.box&&(x.cat==='w'||x.cat==='k'||x.cat==='gl')&&!!NEX_R[x.cls]&&!!BASE[x.cls];   /* Battle Pass skins (bp:1) are limited: never bought or sold */
+const can=x=>!!x&&!x.bp&&!!x.hid&&!x.box&&(x.cat==='w'||x.cat==='k'||x.cat==='gl')&&!!NEX_R[x.cls]&&!!(SELL[x.cat]&&SELL[x.cat][x.cls]);   /* Battle Pass skins (bp:1) are limited: never bought or sold */
 const items=()=>SHOP.items.filter(can);
 const day=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5);
 const hs=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return(h>>>0)/4294967296};
 const r10=n=>Math.max(10,Math.round(n/10)*10);
-const mkt=x=>r10(BASE[x.cls]*(x.cat==='k'?1.3:1)*(.9+hs(x.id+day())*.2));   /* daily price drift ±10% */
+/* Economy guard: for every case the expected sell-back value of a drop is capped at 68% of the case price (the Special roll counts as an average knife),
+   so opening cases and selling the drops can never make coins. Items that sit in several cases take the strictest cap. */
+let FAC=null;
+function facs(){if(FAC)return FAC;FAC={};const v0=x=>(SELL[x.cat]||{})[x.cls]||0,kn=SHOP.items.filter(i=>i.cat==='k'&&i.hid&&i.kv&&!i.p&&!i.sp&&!i.bp&&NEX_R[i.cls]);
+  const cs=SHOP.items.filter(c=>c.box&&c.box.length&&c.p),has=c=>c.box.some(id=>(SHOP.items.find(i=>i.id===id)||{}).sp);
+  [...cs.filter(c=>!has(c)),...cs.filter(has)].forEach(c=>{const its=c.box.map(id=>SHOP.items.find(i=>i.id===id)).filter(Boolean);if(!its.length)return;
+    const W=k=>c.w&&c.w[k]!=null?c.w[k]:(NEX_R[k]?NEX_R[k].w:0),cnt={};its.forEach(i=>cnt[i.cls]=(cnt[i.cls]||0)+1);
+    const val=i=>i.sp?kn.reduce((a,b)=>a+v0(b)*(FAC[b.id]==null?1:FAC[b.id]),0)/(kn.length||1):v0(i),wt=i=>W(i.cls)/cnt[i.cls],tot=its.reduce((a,i)=>a+wt(i),0)||1,ev=its.reduce((a,i)=>a+wt(i)*val(i),0)/tot;
+    const f=ev>0?Math.min(1,.68*c.p/ev):1;its.forEach(i=>{if(!i.sp)FAC[i.id]=Math.min(FAC[i.id]==null?1:FAC[i.id],f)})});
+  return FAC}
+const mkt=x=>r10(SELL[x.cat][x.cls]*(facs()[x.id]==null?1:facs()[x.id])/.6*(.9+hs(x.id+day())*.2));   /* market price = sell-back value / 60%, daily drift ±10% */
 const dealMap=()=>{const m={};items().filter(x=>x.cls!=='se'&&x.cls!=='sp').sort((a,b)=>hs(a.id+'d'+day())-hs(b.id+'d'+day())).slice(0,4).forEach(x=>m[x.id]=15+Math.floor(hs(x.id+'x'+day())*21));return m};  /* −15…35% < 40% buy-back margin: no arbitrage */
 const price=(x,dm,st)=>{let p=mkt(x);if(dm[x.id])p=r10(p*(1-dm[x.id]/100));return st&&x.cat==='w'?r10(p*1.3):p};
 const sellV=x=>r10(mkt(x)*.6*(isST(x)?1.3:1));
